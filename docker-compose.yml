@@ -1,0 +1,87 @@
+version: '3'
+
+services:
+
+  local-postgres:
+    container_name: local-postgres
+    extends:
+      file: services/postgres.yml
+      service: postgres
+    networks:
+      - local-services-network
+  
+  local-dbadmin:
+    container_name: local-dbadmin
+    extends:
+      file: services/postgres.yml
+      service: dbadmin
+    networks:
+      - local-services-network
+
+  local-redis:
+    extends:
+      file: services/redis.yml
+      service: cache
+    networks:
+      - local-services-network
+
+  local-mongodb:
+    container_name: local-mongodb
+    extends:
+      file: services/mongo.yml
+      service: mongodb
+    networks:
+      - local-services-network
+
+  local-langflow-db:
+    extends:
+      file: services/langflow.yml
+      service: langflow-db
+    networks:
+      - local-services-network
+
+  local-langflow:
+    extends:
+      file: services/langflow.yml
+      service: langflow
+    networks:
+      - local-services-network
+    depends_on:
+      - local-langflow-db
+
+  local-ollama:
+    extends:
+      file: services/ollama.yml
+      service: ollama
+    networks:
+      - local-services-network
+
+  local-openWebUI:
+    extends:
+      file: services/ollama.yml
+      service: openWebUI
+    networks:
+      - local-services-network
+    depends_on:
+      - local-ollama
+
+volumes:
+  globaldatabank_postgres:
+    external: true
+  globaldatabank_pgadmin: 
+    external: true
+  globaldatabank_langflow_db:
+    external: false
+  globaldatabank_langflow:
+    external: false
+  globaldatabank_webui_local:
+    external: false
+  globaldatabank_ollama_local:  
+    external: false
+  globaldatabank_mongodb:  
+    external: false
+
+
+networks: 
+    local-services-network:
+      driver: bridge

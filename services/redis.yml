@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+
+  cache:
+    hostname: redis
+    image: redis:6.2-alpine
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    ports:
+      - '6378:6379'
+    volumes: 
+      - /cache:/data
+    restart: on-failure:5
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+

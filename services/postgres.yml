@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  postgres:
+    hostname: postgres
+    image: postgres:15
+    ports:
+      - 5432:5432
+    environment:
+      - PGPORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGDATA=/data/postgres
+    volumes:
+      - globaldatabank_postgres:/data/postgres
+    restart: on-failure:5
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  dbadmin:
+    hostname: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - 8080:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: ${PGADMIN_CONFIG_SERVER_MODE}
+    volumes:
+      - globaldatabank_pgadmin:/var/lib/pgadmin
+    restart: on-failure:5
+    healthcheck:
+      test: ["CMD", "wget", "-O", "-", "http://localhost:8080/misc/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s

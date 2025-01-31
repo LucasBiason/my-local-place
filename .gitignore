@@ -1,0 +1,6 @@
+.env.*
+myenv/
+langflow/
+langflow-db/
+.globaldatabank_langflow/
+.env

@@ -4,9 +4,8 @@ services:
 
   openWebUI:
     image: ghcr.io/open-webui/open-webui:main
-    container_name: ollama-webui
     ports:
-      - "3000:8080"
+      - 3000:8080
     environment: 
       - OLLAMA_BASE_URLS=http://ollama:11434
       - ENV=${ENV}
@@ -20,9 +19,8 @@ services:
 
   ollama:
     image: ollama/ollama:latest
-    container_name: ollama
     ports:
-      - "11434:11434"
+      - 11434:11434
     environment:
       - OLLAMA_KEEP_ALIVE=24h
       - OLLAMA_HOST=0.0.0.0
@@ -30,4 +28,10 @@ services:
       - globaldatabank_ollama_local:/root/.ollama
     tty: true
     restart: on-failure:5
+    healthcheck:
+      test: ollama list || exit 1
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
 

@@ -50,6 +50,7 @@ services:
       - local-langflow-db
 
   local-ollama:
+    container_name: ollama
     extends:
       file: services/ollama.yml
       service: ollama
@@ -57,6 +58,7 @@ services:
       - local-services-network
 
   local-openWebUI:
+    container_name: ollama-webui
     extends:
       file: services/ollama.yml
       service: openWebUI

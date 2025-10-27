@@ -2,39 +2,19 @@ version: "3.9"
 
 services:
 
-  langflow-db:
-    image: postgres:16-alpine
-    container_name: Langflow-DB
-    hostname: langflow-db
-    ports:
-      - 5433:5432
-    environment:
-      PGPORT: 5433
-      POSTGRES_DB: 'langflow'
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - globaldatabank_langflow_db:/var/lib/postgresql/data:rw
-    restart: on-failure:5
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d langflow"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
   langflow:
     image: langflowai/langflow:latest
     container_name: Langflow
     user: root
     ports:
-      - 7860:7860
+      - ${LANGFLOW_PORT:-7860}:7860
     environment:
-      LANGFLOW_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@langflow-db:5433/langflow?sslmode=disable
+      LANGFLOW_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT:-5432}/${LANGFLOW_DB:-langflow_db}?sslmode=disable
       LANGFLOW_CONFIG_DIR: /var/lib/langflow
       LANGFLOW_SUPERUSER: ${LANGFLOW_SUPERUSER}
       LANGFLOW_SUPERUSER_PASSWORD: ${LANGFLOW_SUPERUSER_PASSWORD}
     volumes:
-      - .globaldatabank_langflow:/var/lib/langflow:rw
+      - langflow_data:/var/lib/langflow:rw
     restart: on-failure:5
     healthcheck:
       test: timeout 10s bash -c ':> /dev/tcp/127.0.0.1/7860' || exit 1

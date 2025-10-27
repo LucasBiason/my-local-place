@@ -11,7 +11,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - globaldatabank_mongodb:/data/db
+      - mongodb_data:/data/db
     restart: on-failure:5
     healthcheck:
       test: ["CMD","mongosh", "--eval", "db.adminCommand('ping')"]

@@ -1,5 +1,3 @@
-version: '3'
-
 services:
 
   local-postgres:
@@ -7,83 +5,138 @@ services:
     extends:
       file: services/postgres.yml
       service: postgres
+    env_file:
+      - .env
     networks:
       - local-services-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   
   local-dbadmin:
     container_name: local-dbadmin
     extends:
       file: services/postgres.yml
       service: dbadmin
+    env_file:
+      - .env
     networks:
       - local-services-network
+    depends_on:
+      local-postgres:
+        condition: service_healthy
 
   local-redis:
+    container_name: local-redis
     extends:
       file: services/redis.yml
       service: cache
+    env_file:
+      - .env
     networks:
       - local-services-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  local-rabbitmq:
+    container_name: local-rabbitmq
+    extends:
+      file: services/rabbitmq.yml
+      service: rabbitmq
+    env_file:
+      - .env
+    networks:
+      - local-services-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   local-mongodb:
     container_name: local-mongodb
     extends:
       file: services/mongo.yml
       service: mongodb
+    env_file:
+      - .env
     networks:
       - local-services-network
-
-  local-langflow-db:
-    extends:
-      file: services/langflow.yml
-      service: langflow-db
-    networks:
-      - local-services-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   local-langflow:
+    container_name: local-langflow
     extends:
       file: services/langflow.yml
       service: langflow
+    env_file:
+      - .env
     networks:
       - local-services-network
     depends_on:
-      - local-langflow-db
+      local-postgres:
+        condition: service_healthy
 
   local-ollama:
-    container_name: ollama
+    container_name: local-ollama
     extends:
       file: services/ollama.yml
       service: ollama
     networks:
       - local-services-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  local-openWebUI:
-    container_name: ollama-webui
+  local-openwebui:
+    container_name: local-openwebui
     extends:
       file: services/ollama.yml
       service: openWebUI
+    env_file:
+      - .env
     networks:
       - local-services-network
     depends_on:
-      - local-ollama
+      local-ollama:
+        condition: service_healthy
+
+  dashboard:
+    container_name: local-dashboard
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./dashboard:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - local-services-network
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
 
 volumes:
-  globaldatabank_postgres:
-    external: true
-  globaldatabank_pgadmin: 
-    external: true
-  globaldatabank_langflow_db:
-    external: false
-  globaldatabank_langflow:
-    external: false
-  globaldatabank_webui_local:
-    external: false
-  globaldatabank_ollama_local:  
-    external: false
-  globaldatabank_mongodb:  
-    external: false
-
+  postgres_data:
+  pgadmin_data:
+  redis_data:
+  rabbitmq_data:
+  mongodb_data:
+  langflow_data:
+  ollama_data:
+  openwebui_data:
 
 networks: 
-    local-services-network:
-      driver: bridge
+  local-services-network:
+    driver: bridge

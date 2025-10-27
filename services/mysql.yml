@@ -3,13 +3,20 @@ version: '3'
 services:
 
   mysql:
-    image: mysql/mysql-server:latest
+    image: mysql:8.0-oracle
     container_name: my-mysql
-    restart: always
+    restart: on-failure:5
     environment:
-      - MYSQL_DATABASE=mysqlDB
-      - MYSQL_ROOT_PASSWORD=mysqlPW
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-mysqlDB}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - '3306:3306'
+      - '${MYSQL_PORT:-3306}:3306'
     volumes:
-      - mysql-volume:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

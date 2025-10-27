@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:3.13-management-alpine
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-admin}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: on-failure:5
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

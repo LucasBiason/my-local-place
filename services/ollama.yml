@@ -5,17 +5,22 @@ services:
   openWebUI:
     image: ghcr.io/open-webui/open-webui:main
     ports:
-      - 3000:8080
+      - ${WEBUI_PORT:-8082}:8080
     environment: 
       - OLLAMA_BASE_URLS=http://ollama:11434
       - ENV=${ENV}
       - WEBUI_AUTH=${WEBUI_AUTH}
       - WEBUI_NAME=${WEBUI_NAME}
     volumes:
-      - globaldatabank_webui_local:/app/backend/data
+      - openwebui_data:/app/backend/data
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: on-failure:5
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   ollama:
     image: ollama/ollama:latest
@@ -25,7 +30,7 @@ services:
       - OLLAMA_KEEP_ALIVE=24h
       - OLLAMA_HOST=0.0.0.0
     volumes:
-      - globaldatabank_ollama_local:/root/.ollama
+      - ollama_data:/root/.ollama
     tty: true
     restart: on-failure:5
     healthcheck:

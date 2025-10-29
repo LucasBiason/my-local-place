@@ -1,10 +1,13 @@
-.PHONY: help up down logs clean
+.PHONY: help test dev build up down logs clean
 
 help:
 	@echo "MyLocalPlace v2.0 - Unified Docker Management"
 	@echo ""
 	@echo "Main Commands:"
-	@echo "  make up             - Start MyLocalPlace API (auto-starts)"
+	@echo "  make test           - Run tests with coverage (90%+)"
+	@echo "  make dev            - Start API in DEVELOPMENT mode"
+	@echo "  make build          - Build production image"
+	@echo "  make up             - Start MyLocalPlace + create services"
 	@echo "  make down           - Stop all containers"
 	@echo "  make logs           - Show API logs"
 	@echo "  make clean          - Clean Docker cache"
@@ -16,29 +19,43 @@ help:
 	@echo "Architecture:"
 	@echo "  - MyLocalPlace API: http://localhost:8000 (always running)"
 	@echo "  - Services: Managed via API/Dashboard"
+
+test:
+	@echo "Running tests with coverage..."
 	@echo ""
-	@echo "Services Available:"
-	@echo "  - local-postgres (5432)"
-	@echo "  - local-redis (6379)"
-	@echo "  - local-rabbitmq (5672, 15672)"
-	@echo "  - local-mongodb (27017)"
-	@echo "  - local-langflow (7860)"
-	@echo "  - local-ollama (11434)"
-	@echo "  - local-jupyter (8888)"
+	@docker compose --profile test down 2>/dev/null || true
+	@docker compose --profile test build --no-cache test
+	@docker compose --profile test up --abort-on-container-exit test
+	@docker compose --profile test down
+	@echo ""
+	@echo "Tests complete! Coverage: backend/htmlcov/index.html"
+
+dev:
+	@echo "Starting API in DEVELOPMENT mode (hot reload)..."
+	@echo ""
+	@docker compose down 2>/dev/null || true
+	@API_COMMAND=dev DEV_VOLUME=rw LOG_LEVEL=debug docker compose up --build mylocalplace-api
+	@echo ""
+	@echo "API stopped."
+
+build:
+	@echo "Building PRODUCTION image..."
+	docker compose build --no-cache mylocalplace-api
+	@echo "Production image built!"
 
 up:
 	@echo "Starting MyLocalPlace API..."
 	@echo ""
+	@docker compose down 2>/dev/null || true
 	@docker compose up -d mylocalplace-api
-	@echo ""
-	@echo "MyLocalPlace API running!"
-	@echo "  API: http://localhost:8000"
-	@echo "  Docs: http://localhost:8000/docs"
 	@echo ""
 	@echo "Creating service containers (not started)..."
 	@docker compose --profile services create
 	@echo ""
-	@echo "All containers created!"
+	@echo "All containers ready!"
+	@echo "  API: http://localhost:8000"
+	@echo "  Docs: http://localhost:8000/docs"
+	@echo ""
 	@echo "Use the Dashboard to start services on demand."
 	@echo ""
 	@echo "View logs: make logs"
@@ -47,6 +64,7 @@ down:
 	@echo "Stopping all containers..."
 	@docker compose down
 	@docker compose --profile services down
+	@docker compose --profile test down 2>/dev/null || true
 	@echo "All containers stopped!"
 
 logs:

@@ -1,5 +1,24 @@
 services:
   # ==========================================
+  # Test service - Run tests with coverage
+  # ==========================================
+  test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: test
+    container_name: mylocalplace-test
+    profiles: ["test"]
+    command: ["test"]
+    volumes:
+      - ./backend/htmlcov:/app/htmlcov:rw
+    environment:
+      - PYTHONPATH=/app
+    networks:
+      - local-services-network
+    restart: "no"
+
+  # ==========================================
   # MyLocalPlace API - ALWAYS RUNNING
   # ==========================================
   mylocalplace-api:

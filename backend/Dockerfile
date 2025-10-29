@@ -20,7 +20,35 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 # ============================================
-# Stage 2: Production - Clean and minimal
+# Stage 2: Test - Testing environment
+# ============================================
+FROM base AS test
+
+# Install dev dependencies
+COPY requirements-dev.txt .
+RUN pip install --no-cache-dir -r requirements-dev.txt
+
+# Copy application code
+COPY app/ ./app/
+
+# Copy test files
+COPY tests/ ./tests/
+COPY pytest.ini ./
+COPY .coveragerc ./
+
+# Copy entrypoint
+COPY --chmod=755 entrypoint.sh /entrypoint.sh
+
+# Set PYTHONPATH for imports
+ENV PYTHONPATH=/app
+
+# Tests run via entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["test"]
+
+
+# ============================================
+# Stage 3: Production - Clean and minimal
 # ============================================
 FROM base AS production
 

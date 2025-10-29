@@ -12,6 +12,7 @@ MyLocalPlace Backend API - Entrypoint CLI
 Usage: $cli_name [command]
 
 Commands:
+  test          Run tests with coverage (90%+ required)
   dev           Start development server (hot reload)
   runserver     Start production server (multi-worker)
   health        Check API health and Docker connectivity
@@ -38,6 +39,19 @@ check_docker() {
 
 # Main command handler
 case "${1:-runserver}" in
+  test)
+    echo "========================================="
+    echo "Running tests with coverage..."
+    echo "========================================="
+    pytest tests/ \
+      --cov=app \
+      --cov-report=term-missing \
+      --cov-report=html \
+      --cov-config=.coveragerc \
+      --cov-fail-under=90 \
+      -v
+    ;;
+
   dev)
     echo "========================================="
     echo "MyLocalPlace Backend API - DEVELOPMENT"
@@ -94,4 +108,3 @@ case "${1:-runserver}" in
     cli_help
     ;;
 esac
-

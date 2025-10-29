@@ -49,6 +49,26 @@ services:
     restart: unless-stopped
 
   # ==========================================
+  # Frontend - React Dashboard
+  # ==========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+    container_name: mylocalplace-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - mylocalplace-api
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    networks:
+      - local-services-network
+    restart: unless-stopped
+    profiles: ["frontend", "full"]
+
+  # ==========================================
   # SERVICES - Created but NOT started
   # ==========================================
   local-postgres:

@@ -1,4 +1,4 @@
-.PHONY: help test dev build up down logs clean
+.PHONY: help test dev dev-full build up up-full down logs clean
 
 help:
 	@echo "MyLocalPlace v2.0 - Unified Docker Management"
@@ -6,8 +6,10 @@ help:
 	@echo "Main Commands:"
 	@echo "  make test           - Run tests with coverage (90%+)"
 	@echo "  make dev            - Start API in DEVELOPMENT mode"
-	@echo "  make build          - Build production image"
-	@echo "  make up             - Start MyLocalPlace + create services"
+	@echo "  make dev-full       - Start API + Frontend (full stack)"
+	@echo "  make build          - Build production images"
+	@echo "  make up             - Start MyLocalPlace API"
+	@echo "  make up-full        - Start API + Frontend"
 	@echo "  make down           - Stop all containers"
 	@echo "  make logs           - Show API logs"
 	@echo "  make clean          - Clean Docker cache"
@@ -17,7 +19,8 @@ help:
 	@echo "  Use the MyLocalPlace Dashboard to start/stop services."
 	@echo ""
 	@echo "Architecture:"
-	@echo "  - MyLocalPlace API: http://localhost:8000 (always running)"
+	@echo "  - API: http://localhost:8000 (always running)"
+	@echo "  - Frontend: http://localhost:3000 (optional)"
 	@echo "  - Services: Managed via API/Dashboard"
 
 test:
@@ -38,10 +41,18 @@ dev:
 	@echo ""
 	@echo "API stopped."
 
+dev-full:
+	@echo "Starting FULL STACK in DEVELOPMENT mode..."
+	@echo ""
+	@docker compose --profile full down 2>/dev/null || true
+	@API_COMMAND=dev DEV_VOLUME=rw LOG_LEVEL=debug docker compose --profile full up --build
+	@echo ""
+	@echo "Services stopped."
+
 build:
-	@echo "Building PRODUCTION image..."
-	docker compose build --no-cache mylocalplace-api
-	@echo "Production image built!"
+	@echo "Building PRODUCTION images..."
+	docker compose build --no-cache mylocalplace-api frontend
+	@echo "Production images built!"
 
 up:
 	@echo "Starting MyLocalPlace API..."
@@ -57,6 +68,22 @@ up:
 	@echo "  Docs: http://localhost:8000/docs"
 	@echo ""
 	@echo "Use the Dashboard to start services on demand."
+	@echo ""
+	@echo "View logs: make logs"
+
+up-full:
+	@echo "Starting FULL STACK (API + Frontend)..."
+	@echo ""
+	@docker compose --profile full down 2>/dev/null || true
+	@docker compose --profile full up -d
+	@echo ""
+	@echo "Creating service containers (not started)..."
+	@docker compose --profile services create
+	@echo ""
+	@echo "All ready!"
+	@echo "  Frontend: http://localhost:3000"
+	@echo "  API: http://localhost:8000"
+	@echo "  Docs: http://localhost:8000/docs"
 	@echo ""
 	@echo "View logs: make logs"
 

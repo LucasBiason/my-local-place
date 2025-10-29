@@ -1,29 +1,39 @@
-"""MyLocalPlace Backend API - Main application."""
+"""MyLocalPlace Backend API - Main application entry point.
 
+This module initializes and configures the FastAPI application,
+including middleware, CORS, and router registration.
+"""
+
+from app.routers import containers_router, health_router, system_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import containers_router, system_router, health_router
-
-# Create FastAPI app
+# Create FastAPI application instance
 app = FastAPI(
     title="MyLocalPlace API",
-    description="Dashboard API for managing Docker containers",
+    description="Dashboard API for managing Docker containers locally",
     version="2.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    contact={
+        "name": "Lucas Biason",
+        "url": "https://github.com/LucasBiason/my-local-place",
+    },
 )
 
-# CORS configuration
+# Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:3000",  # React dev server
+        "http://localhost:5173",  # Vite dev server
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include routers
+# Register routers
 app.include_router(health_router)
 app.include_router(containers_router)
 app.include_router(system_router)
@@ -31,5 +41,5 @@ app.include_router(system_router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
 
+    uvicorn.run(app, host="0.0.0.0", port=8000)

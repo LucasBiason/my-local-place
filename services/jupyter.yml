@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  jupyter:
+    image: jupyter/scipy-notebook:latest
+    container_name: local-jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ${JUPYTER_NOTEBOOKS_PATH}:/home/jovyan/work
+      - jupyter_workspace:/home/jovyan/work/jupyter-workspace
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
+      - JUPYTER_PORT=${JUPYTER_PORT}
+    networks:
+      - local-services-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${JUPYTER_PORT}/api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    entrypoint: /bin/bash
+    command: -c "exec start-notebook.sh --ServerApp.token='$${JUPYTER_TOKEN}' --ServerApp.allow_origin='*' --ServerApp.port=$${JUPYTER_PORT}"
+
+volumes:
+  jupyter_workspace:
+

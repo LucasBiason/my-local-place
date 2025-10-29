@@ -14,11 +14,11 @@ This Docker-configured environment includes the tools I use for local developmen
 
 ## 🌟 Key Features
 
-✨ **All-in-One Environment** - PostgreSQL, MongoDB, Redis, Ollama, LangFlow  
-📊 **Streamlit Dashboard** - Visual management and observability  
-🐳 **Docker Orchestrated** - Easy setup with docker-compose  
-🔒 **Secure by Default** - Environment variables and secrets management  
-⚡ **Quick Commands** - Makefile with useful shortcuts  
+✨ **All-in-One Environment** - PostgreSQL, MongoDB, Redis, Ollama, LangFlow
+📊 **Streamlit Dashboard** - Visual management and observability
+🐳 **Docker Orchestrated** - Easy setup with docker-compose
+🔒 **Secure by Default** - Environment variables and secrets management
+⚡ **Quick Commands** - Makefile with useful shortcuts
 💾 **Backup Ready** - Automated backup scripts
 
 ## 🚀 Quick Start
@@ -319,6 +319,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Status:** 🚀 Active Development  
-**Version:** 2.0.0  
+**Status:** 🚀 Active Development
+**Version:** 2.0.0
 **Last Updated:** October 2025

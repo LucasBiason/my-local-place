@@ -6,7 +6,7 @@ services:
     image: ghcr.io/open-webui/open-webui:main
     ports:
       - ${WEBUI_PORT:-8082}:8080
-    environment: 
+    environment:
       - OLLAMA_BASE_URLS=http://ollama:11434
       - ENV=${ENV}
       - WEBUI_AUTH=${WEBUI_AUTH}

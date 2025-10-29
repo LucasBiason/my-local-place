@@ -14,7 +14,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  
+
   local-dbadmin:
     container_name: local-dbadmin
     extends:
@@ -127,6 +127,16 @@ services:
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
 
+  local-jupyter:
+    container_name: local-jupyter
+    extends:
+      file: services/jupyter.yml
+      service: jupyter
+    env_file:
+      - .env
+    networks:
+      - local-services-network
+
 volumes:
   postgres_data:
   pgadmin_data:
@@ -136,7 +146,8 @@ volumes:
   langflow_data:
   ollama_data:
   openwebui_data:
+  jupyter_workspace:
 
-networks: 
+networks:
   local-services-network:
     driver: bridge

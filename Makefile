@@ -1,87 +1,60 @@
-.PHONY: help setup build up down restart logs ps clean health backup
+.PHONY: help up down logs clean
 
 help:
-	@echo "MyLocalPlace - Comandos Disponiveis:"
+	@echo "MyLocalPlace v2.0 - Unified Docker Management"
 	@echo ""
-	@echo "  make setup     - Configuracao inicial (.env)"
-	@echo "  make build     - Build todos os servicos"
-	@echo "  make up        - Iniciar todos os servicos"
-	@echo "  make down      - Parar todos os servicos"
-	@echo "  make restart   - Reiniciar todos os servicos"
-	@echo "  make logs      - Ver logs em tempo real"
-	@echo "  make ps        - Status dos containers"
-	@echo "  make health    - Health check de todos servicos"
-	@echo "  make clean     - Limpar volumes e containers"
-	@echo "  make backup    - Backup dos dados"
+	@echo "Main Commands:"
+	@echo "  make up             - Start MyLocalPlace API (auto-starts)"
+	@echo "  make down           - Stop all containers"
+	@echo "  make logs           - Show API logs"
+	@echo "  make clean          - Clean Docker cache"
 	@echo ""
-
-setup:
-	@if [ ! -f .env ]; then \
-		echo "Criando .env a partir do .env.example..."; \
-		cp .env.example .env; \
-		echo ".env criado! Por favor, edite com suas credenciais."; \
-		echo "Execute: nano .env"; \
-	else \
-		echo ".env ja existe!"; \
-	fi
-
-build:
-	@echo "Building services..."
-	docker compose build
+	@echo "Service Management:"
+	@echo "  All services are CREATED but NOT started."
+	@echo "  Use the MyLocalPlace Dashboard to start/stop services."
+	@echo ""
+	@echo "Architecture:"
+	@echo "  - MyLocalPlace API: http://localhost:8000 (always running)"
+	@echo "  - Services: Managed via API/Dashboard"
+	@echo ""
+	@echo "Services Available:"
+	@echo "  - local-postgres (5432)"
+	@echo "  - local-redis (6379)"
+	@echo "  - local-rabbitmq (5672, 15672)"
+	@echo "  - local-mongodb (27017)"
+	@echo "  - local-langflow (7860)"
+	@echo "  - local-ollama (11434)"
+	@echo "  - local-jupyter (8888)"
 
 up:
-	@echo "Starting services..."
-	docker compose up -d
+	@echo "Starting MyLocalPlace API..."
 	@echo ""
-	@echo "Services started!"
-	@echo "PostgreSQL: http://localhost:8080 (PGAdmin)"
-	@echo "MongoDB: http://localhost:8081"
-	@echo "Redis: localhost:6379"
-	@echo "Ollama WebUI: http://localhost:3000"
-	@echo "LangFlow: http://localhost:7860"
+	@docker compose up -d mylocalplace-api
 	@echo ""
+	@echo "MyLocalPlace API running!"
+	@echo "  API: http://localhost:8000"
+	@echo "  Docs: http://localhost:8000/docs"
+	@echo ""
+	@echo "Creating service containers (not started)..."
+	@docker compose --profile services create
+	@echo ""
+	@echo "All containers created!"
+	@echo "Use the Dashboard to start services on demand."
+	@echo ""
+	@echo "View logs: make logs"
 
 down:
-	@echo "Stopping services..."
-	docker compose down
-
-restart:
-	@echo "Restarting services..."
-	docker compose restart
+	@echo "Stopping all containers..."
+	@docker compose down
+	@docker compose --profile services down
+	@echo "All containers stopped!"
 
 logs:
-	@echo "Showing logs (Ctrl+C to exit)..."
-	docker compose logs -f
-
-ps:
-	@echo "Container status:"
-	@docker compose ps
-
-health:
-	@echo "Checking service health..."
+	@echo "MyLocalPlace API logs (Ctrl+C to exit):"
 	@echo ""
-	@echo "PostgreSQL:" && docker exec local-postgres pg_isready -U postgres || echo "Not ready"
-	@echo "Redis:" && docker exec local-redis redis-cli ping || echo "Not ready"
-	@echo "MongoDB:" && docker exec local-mongodb mongosh --eval "db.adminCommand('ping')" --quiet || echo "Not ready"
-	@echo "Ollama:" && curl -s http://localhost:11434 > /dev/null && echo "OK" || echo "Not ready"
-	@echo ""
+	@docker compose logs -f mylocalplace-api
 
 clean:
-	@echo "Cleaning up..."
-	@read -p "This will remove ALL volumes and data. Continue? [y/N] " confirm; \
-	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
-		docker compose down -v; \
-		docker system prune -f; \
-		echo "Cleanup complete!"; \
-	else \
-		echo "Cancelled"; \
-	fi
-
-backup:
-	@echo "Creating backup..."
-	@mkdir -p backups
-	@echo "Backing up PostgreSQL..."
-	@docker exec local-postgres pg_dumpall -U postgres > backups/postgres_$(shell date +%Y%m%d_%H%M%S).sql
-	@echo "Backing up MongoDB..."
-	@docker exec local-mongodb mongodump --archive > backups/mongodb_$(shell date +%Y%m%d_%H%M%S).archive
-	@echo "Backup complete! Check backups/ folder"
+	@echo "Cleaning Docker cache..."
+	@docker system prune -f
+	@echo "Cache cleaned!"

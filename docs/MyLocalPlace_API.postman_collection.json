@@ -1,0 +1,500 @@
+{
+	"info": {
+		"_postman_id": "mylocalplace-v2-api",
+		"name": "MyLocalPlace v2.0 API",
+		"description": "# MyLocalPlace v2.0 - Dashboard DevTools API\n\nAPI REST para gerenciar containers Docker via dashboard web.\n\n## Base URL\n\n```\nhttp://localhost:8000\n```\n\n## Endpoints\n\n### Health\n- `GET /health` - Health check da API\n\n### Containers\n- `GET /api/v1/containers` - Listar todos os containers\n- `GET /api/v1/containers/{name}` - Detalhes de um container\n- `POST /api/v1/containers/{name}/start` - Iniciar container\n- `POST /api/v1/containers/{name}/stop` - Parar container\n- `POST /api/v1/containers/{name}/restart` - Reiniciar container\n- `GET /api/v1/containers/{name}/logs` - Obter logs do container\n- `GET /api/v1/containers/{name}/stats` - Estatísticas de recursos\n\n### System\n- `GET /api/v1/system/metrics` - Métricas do sistema (CPU, RAM, Disk)\n\n## Autenticação\n\nNenhuma autenticação necessária (uso local).\n\n## Tecnologias\n\n- FastAPI 0.115\n- Docker SDK 7.1\n- Python 3.13\n- Pydantic 2.10\n\n## Versão\n\n2.0.0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						},
+						"description": "Verifica o status da API e conexão com Docker.\n\n**Response:**\n```json\n{\n  \"status\": \"healthy\",\n  \"docker_connected\": true,\n  \"timestamp\": \"2025-10-29T20:00:00.000000\",\n  \"version\": \"2.0.0\"\n}\n```\n\n**Status Codes:**\n- `200` - API healthy\n- `503` - Service unavailable (Docker não conectado)"
+					},
+					"response": [
+						{
+							"name": "Success - API Healthy",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/health",
+									"host": ["{{base_url}}"],
+									"path": ["health"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"healthy\",\n    \"docker_connected\": true,\n    \"timestamp\": \"2025-10-29T20:42:25.695125\",\n    \"version\": \"2.0.0\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Containers",
+			"item": [
+				{
+					"name": "List All Containers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/containers?all=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "containers"],
+							"query": [
+								{
+									"key": "all",
+									"value": "true",
+									"description": "Include stopped containers (default: true)"
+								}
+							]
+						},
+						"description": "Lista todos os containers Docker.\n\n**Query Parameters:**\n- `all` (boolean): Incluir containers parados (default: true)\n\n**Response:**\nArray de containers com informações:\n- `id`: Container short ID\n- `name`: Nome do container\n- `status`: Status (running, exited, etc)\n- `state`: Estado detalhado\n- `image`: Imagem Docker\n- `ports`: Mapeamento de portas\n- `created`: Data de criação\n- `running`: Boolean se está rodando"
+					},
+					"response": [
+						{
+							"name": "Success - List Containers",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers?all=true",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers"],
+									"query": [
+										{
+											"key": "all",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"335c2e12061a\",\n        \"name\": \"ml-sales-frontend\",\n        \"status\": \"exited\",\n        \"state\": \"exited\",\n        \"image\": \"ml-sales-forecasting-frontend:latest\",\n        \"ports\": [],\n        \"created\": \"2025-10-29T19:33:51.415961255Z\",\n        \"running\": false\n    },\n    {\n        \"id\": \"153083fd64a4\",\n        \"name\": \"ml-sales-api\",\n        \"status\": \"exited\",\n        \"state\": \"exited\",\n        \"image\": \"ml-sales-forecasting-api:latest\",\n        \"ports\": [],\n        \"created\": \"2025-10-29T19:33:51.401711452Z\",\n        \"running\": false\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Container Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/containers/:name",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "containers", ":name"],
+							"variable": [
+								{
+									"key": "name",
+									"value": "local-postgres",
+									"description": "Container name"
+								}
+							]
+						},
+						"description": "Obtém detalhes de um container específico.\n\n**Path Parameters:**\n- `name` (string): Nome do container\n\n**Response:**\nObjeto com detalhes completos do container."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"id\": \"abc123def\",\n    \"name\": \"local-postgres\",\n    \"status\": \"running\",\n    \"state\": \"running\",\n    \"image\": \"postgres:17\",\n    \"ports\": [\"5432:5432\"],\n    \"created\": \"2025-10-29T10:00:00Z\",\n    \"running\": true\n}"
+						},
+						{
+							"name": "Error - Container Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/invalid-name",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "invalid-name"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"detail\": \"Container invalid-name not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Start Container",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/containers/:name/start",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "containers", ":name", "start"],
+							"variable": [
+								{
+									"key": "name",
+									"value": "local-postgres",
+									"description": "Container name"
+								}
+							]
+						},
+						"description": "Inicia um container parado.\n\n**Path Parameters:**\n- `name` (string): Nome do container\n\n**Response:**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Container {name} started\"\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/start",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "start"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Container local-postgres started\"\n}"
+						},
+						{
+							"name": "Error - Not Found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/invalid/start",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "invalid", "start"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"detail\": \"Container invalid not found\"\n}"
+						},
+						{
+							"name": "Error - Already Running",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/start",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "start"]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"detail\": \"Failed to start container: Container already started\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Stop Container",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/containers/:name/stop",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "containers", ":name", "stop"],
+							"variable": [
+								{
+									"key": "name",
+									"value": "local-postgres"
+								}
+							]
+						},
+						"description": "Para um container em execução."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/stop",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "stop"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Container local-postgres stopped\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Restart Container",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/containers/:name/restart",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "containers", ":name", "restart"],
+							"variable": [
+								{
+									"key": "name",
+									"value": "local-postgres"
+								}
+							]
+						},
+						"description": "Reinicia um container."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/restart",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "restart"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Container local-postgres restarted\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Container Logs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/containers/:name/logs?tail=100",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "containers", ":name", "logs"],
+							"query": [
+								{
+									"key": "tail",
+									"value": "100",
+									"description": "Number of log lines (1-1000)"
+								}
+							],
+							"variable": [
+								{
+									"key": "name",
+									"value": "local-postgres"
+								}
+							]
+						},
+						"description": "Obtém logs de um container.\n\n**Query Parameters:**\n- `tail` (integer): Número de linhas (1-1000, default: 100)\n\n**Response:**\n```json\n{\n  \"container\": \"local-postgres\",\n  \"lines\": [...],\n  \"tail\": 100\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/logs?tail=50",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "logs"],
+									"query": [
+										{
+											"key": "tail",
+											"value": "50"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"container\": \"local-postgres\",\n    \"lines\": [\n        \"2025-10-29T10:00:00.000Z PostgreSQL Database started\",\n        \"2025-10-29T10:00:01.000Z Listening on port 5432\",\n        \"2025-10-29T10:00:02.000Z Database system is ready to accept connections\"\n    ],\n    \"tail\": 3\n}"
+						},
+						{
+							"name": "Error - Invalid Tail",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/logs?tail=2000",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "logs"],
+									"query": [
+										{
+											"key": "tail",
+											"value": "2000"
+										}
+									]
+								}
+							},
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"detail\": [\n        {\n            \"type\": \"less_than_equal\",\n            \"loc\": [\"query\", \"tail\"],\n            \"msg\": \"Input should be less than or equal to 1000\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Container Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/containers/:name/stats",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "containers", ":name", "stats"],
+							"variable": [
+								{
+									"key": "name",
+									"value": "local-postgres"
+								}
+							]
+						},
+						"description": "Obtém estatísticas de recursos de um container.\n\n**Response:**\n```json\n{\n  \"cpu_percent\": 2.5,\n  \"memory_usage_mb\": 150.5,\n  \"memory_limit_mb\": 2048.0,\n  \"memory_percent\": 7.35,\n  \"network_rx_mb\": 10.5,\n  \"network_tx_mb\": 5.2\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/stats",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "stats"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"cpu_percent\": 2.45,\n    \"memory_usage_mb\": 156.8,\n    \"memory_limit_mb\": 2048.0,\n    \"memory_percent\": 7.66,\n    \"network_rx_mb\": 12.34,\n    \"network_tx_mb\": 6.78\n}"
+						},
+						{
+							"name": "Error - Container Not Running",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/stopped-container/stats",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "stopped-container", "stats"]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"detail\": \"Failed to get stats: Container is not running\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "System",
+			"item": [
+				{
+					"name": "Get System Metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/system/metrics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "system", "metrics"]
+						},
+						"description": "Obtém métricas do sistema host (CPU, RAM, Disk).\n\n**Response:**\n```json\n{\n  \"cpu_percent\": 25.5,\n  \"memory\": {\n    \"total_gb\": 32.0,\n    \"used_gb\": 18.5,\n    \"percent\": 57.8\n  },\n  \"disk\": {\n    \"total_gb\": 1000.0,\n    \"used_gb\": 600.0,\n    \"percent\": 60.0\n  }\n}\n```"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/system/metrics",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "system", "metrics"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"cpu_percent\": 21.8,\n    \"memory\": {\n        \"total_gb\": 30.46,\n        \"used_gb\": 18.61,\n        \"percent\": 67.1\n    },\n    \"disk\": {\n        \"total_gb\": 936.79,\n        \"used_gb\": 583.07,\n        \"percent\": 65.6\n    }\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
+

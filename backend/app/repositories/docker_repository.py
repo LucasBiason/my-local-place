@@ -1,4 +1,8 @@
-"""Docker operations manager."""
+"""Docker repository - Data access layer for Docker Engine.
+
+Similar to how ORMs interact with databases, this repository
+interacts with Docker Engine via Docker SDK.
+"""
 
 from typing import Dict, List, Any
 from docker.errors import NotFound, APIError
@@ -6,8 +10,8 @@ from docker.errors import NotFound, APIError
 from app.core import docker_client
 
 
-class DockerManager:
-    """Manages Docker operations."""
+class DockerRepository:
+    """Repository for Docker operations (similar to DB repositories/ORMs)."""
     
     def __init__(self):
         """Initialize with docker client."""

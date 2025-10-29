@@ -1,0 +1,485 @@
+{
+  "info": {
+    "_postman_id": "mylocalplace-v2-api",
+    "name": "MyLocalPlace v2.0 API",
+    "description": "# MyLocalPlace v2.0 - Dashboard DevTools API\n\nAPI REST para gerenciar containers Docker via dashboard web.\n\n## Base URL\n\n```\nhttp://localhost:8000\n```\n\n## Tecnologias\n\n- FastAPI 0.115\n- Docker SDK 7.1\n- Python 3.13\n- Pydantic 2.10\n\n**Todos os exemplos foram capturados da API rodando em Docker com dados reais.**",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Verifica status da API e conex\u00e3o Docker.\n\n**Response real capturado do Docker.**"
+          },
+          "response": [
+            {
+              "name": "Success - API Healthy",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/health",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"healthy\",\n  \"docker_connected\": true,\n  \"timestamp\": \"2025-10-29T21:10:57.803199\",\n  \"version\": \"2.0.0\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Containers",
+      "item": [
+        {
+          "name": "List All Containers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/containers?all=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "containers"
+              ],
+              "query": [
+                {
+                  "key": "all",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Lista todos containers Docker.\n\n**Response real com 5 containers do sistema.**"
+          },
+          "response": [
+            {
+              "name": "Success - Lista Real de Containers",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/containers?all=true",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "containers"
+                  ],
+                  "query": [
+                    {
+                      "key": "all",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"id\": \"eddd3e24aeed\",\n    \"name\": \"mylocalplace-api\",\n    \"status\": \"running\",\n    \"state\": \"running\",\n    \"image\": \"backend_api:latest\",\n    \"ports\": [\n      \"8000:8000/tcp\",\n      \"8000:8000/tcp\"\n    ],\n    \"created\": \"2025-10-29T21:10:38.139300731Z\",\n    \"running\": true\n  },\n  {\n    \"id\": \"335c2e12061a\",\n    \"name\": \"ml-sales-frontend\",\n    \"status\": \"exited\",\n    \"state\": \"exited\",\n    \"image\": \"ml-sales-forecasting-frontend:latest\",\n    \"ports\": [],\n    \"created\": \"2025-10-29T19:33:51.415961255Z\",\n    \"running\": false\n  },\n  {\n    \"id\": \"153083fd64a4\",\n    \"name\": \"ml-sales-api\",\n    \"status\": \"exited\",\n    \"state\": \"exited\",\n    \"image\": \"ml-sales-forecasting-api:latest\",\n    \"ports\": [],\n    \"created\": \"2025-10-29T19:33:51.401711452Z\",\n    \"running\": false\n  },\n  {\n    \"id\": \"58374daed73c\",\n    \"name\": \"hungry_yalow\",\n    \"status\": \"running\",\n    \"state\": \"running\",\n    \"image\": \"ghcr.io/github/github-mcp-server:latest\",\n    \"ports\": [],\n    \"created\": \"2025-10-27T23:07:04.63400244Z\",\n    \"running\": true\n  },\n  {\n    \"id\": \"6278d7421984\",\n    \"name\": \"local-postgres\",\n    \"status\": \"running\",\n    \"state\": \"running\",\n    \"image\": \"postgres:17-alpine\",\n    \"ports\": [\n      \"5432:5432/tcp\",\n      \"5432:5432/tcp\"\n    ],\n    \"created\": \"2025-10-27T16:56:05.598346627Z\",\n    \"running\": true\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Container Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/containers/mylocalplace-api",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "containers",
+                "mylocalplace-api"
+              ]
+            },
+            "description": "Detalhes completos de um container.\n\n**Response real com state, health check e todas as informa\u00e7\u00f5es.**"
+          },
+          "response": [
+            {
+              "name": "Success - Container Real",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/containers/mylocalplace-api",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "containers",
+                    "mylocalplace-api"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"eddd3e24aeed\",\n  \"name\": \"mylocalplace-api\",\n  \"status\": \"running\",\n  \"state\": {\n    \"Status\": \"running\",\n    \"Running\": true,\n    \"Paused\": false,\n    \"Restarting\": false,\n    \"OOMKilled\": false,\n    \"Dead\": false,\n    \"Pid\": 2185159,\n    \"ExitCode\": 0,\n    \"Error\": \"\",\n    \"StartedAt\": \"2025-10-29T21:10:38.192545968Z\",\n    \"FinishedAt\": \"0001-01-01T00:00:00Z\",\n    \"Health\": {\n      \"Status\": \"healthy\",\n      \"FailingStreak\": 0,\n      \"Log\": [\n        {\n          \"Start\": \"2025-10-29T18:10:43.456629311-03:00\",\n          \"End\": \"2025-10-29T18:10:43.652885007-03:00\",\n          \"ExitCode\": 0,\n          \"Output\": \"  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\\n                                 Dload  Upload   Total   Spent    Left  Speed\\n\\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\\r100   103  100   103    0     0    822      0 --:--:-- --:--:-- --:--:--   824\\n{\\\"status\\\":\\\"healthy\\\",\\\"docker_connected\\\":true,\\\"timestamp\\\":\\\"2025-10-29T21:10:43.650168\\\",\\\"version\\\":\\\"2.0.0\\\"}\"\n        }\n      ]\n    }\n  },\n  \"image\": \"backend_api:latest\",\n  \"ports\": [\n    \"8000:8000/tcp\",\n    \"8000:8000/tcp\"\n  ],\n  \"created\": \"2025-10-29T21:10:38.139300731Z\",\n  \"running\": true\n}"
+            },
+            {
+              "name": "Error - Container Not Found (Real)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/containers/container-nao-existe",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "containers",
+                    "container-nao-existe"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"detail\": \"Container container-nao-existe not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Start Container",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/containers/mylocalplace-api/start",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "containers",
+                "mylocalplace-api",
+                "start"
+              ]
+            },
+            "description": "Inicia um container parado.\n\n**Response real de container j\u00e1 em execu\u00e7\u00e3o.**"
+          },
+          "response": [
+            {
+              "name": "Success - Container Started (Real)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/containers/mylocalplace-api/start",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "containers",
+                    "mylocalplace-api",
+                    "start"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"success\",\n  \"message\": \"Container mylocalplace-api started\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Container Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/containers/mylocalplace-api/logs?tail=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "containers",
+                "mylocalplace-api",
+                "logs"
+              ],
+              "query": [
+                {
+                  "key": "tail",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Logs reais do container.\n\n**19 linhas de log capturadas durante os testes.**"
+          },
+          "response": [
+            {
+              "name": "Success - Logs Reais",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/containers/mylocalplace-api/logs?tail=50",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "containers",
+                    "mylocalplace-api",
+                    "logs"
+                  ],
+                  "query": [
+                    {
+                      "key": "tail",
+                      "value": "50"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"container\": \"mylocalplace-api\",\n  \"lines\": [\n    \"2025-10-29T21:10:39.970182776Z INFO:     Started server process [1]\",\n    \"2025-10-29T21:10:39.970296328Z INFO:     Waiting for application startup.\",\n    \"2025-10-29T21:10:39.970589608Z INFO:     Application startup complete.\",\n    \"2025-10-29T21:10:39.971604597Z INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)\",\n    \"2025-10-29T21:10:41.545251248Z INFO:     172.20.0.1:34522 - \\\"GET /health HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:41.552536249Z INFO:     172.20.0.1:34534 - \\\"GET /health HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:41.594953136Z INFO:     172.20.0.1:34542 - \\\"GET /api/v1/containers?all=true HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:41.606139437Z INFO:     172.20.0.1:34544 - \\\"GET /api/v1/containers/mylocalplace-api HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:41.618133455Z INFO:     172.20.0.1:34546 - \\\"GET /api/v1/containers/mylocalplace-api/logs?tail=50 HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:42.633365761Z INFO:     172.20.0.1:34556 - \\\"GET /api/v1/containers/mylocalplace-api/stats HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:42.642523380Z INFO:     172.20.0.1:34566 - \\\"POST /api/v1/containers/mylocalplace-api/start HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:43.648177668Z INFO:     172.20.0.1:34576 - \\\"GET /api/v1/system/metrics HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:43.650473495Z INFO:     127.0.0.1:46868 - \\\"GET /health HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:43.652340918Z INFO:     172.20.0.1:34580 - \\\"GET /api/v1/containers/container-nao-existe HTTP/1.1\\\" 404 Not Found\",\n    \"2025-10-29T21:10:43.655697614Z INFO:     172.20.0.1:34588 - \\\"GET /api/v1/containers/mylocalplace-api/logs?tail=2000 HTTP/1.1\\\" 422 Unprocessable Content\",\n    \"2025-10-29T21:10:57.797983614Z INFO:     172.20.0.1:44102 - \\\"GET /health HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:57.803624034Z INFO:     172.20.0.1:44108 - \\\"GET /health HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:57.841926800Z INFO:     172.20.0.1:44114 - \\\"GET /api/v1/containers?all=true HTTP/1.1\\\" 200 OK\",\n    \"2025-10-29T21:10:57.853145945Z INFO:     172.20.0.1:44126 - \\\"GET /api/v1/containers/mylocalplace-api HTTP/1.1\\\" 200 OK\"\n  ],\n  \"tail\": 19\n}"
+            },
+            {
+              "name": "Error - Validation Tail > 1000 (Real)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/containers/mylocalplace-api/logs?tail=2000",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "containers",
+                    "mylocalplace-api",
+                    "logs"
+                  ],
+                  "query": [
+                    {
+                      "key": "tail",
+                      "value": "2000"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"detail\": [\n    {\n      \"type\": \"less_than_equal\",\n      \"loc\": [\n        \"query\",\n        \"tail\"\n      ],\n      \"msg\": \"Input should be less than or equal to 1000\",\n      \"input\": \"2000\",\n      \"ctx\": {\n        \"le\": 1000\n      }\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Container Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/containers/mylocalplace-api/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "containers",
+                "mylocalplace-api",
+                "stats"
+              ]
+            },
+            "description": "Estat\u00edsticas reais de CPU, RAM e Network.\n\n**Dados capturados durante execu\u00e7\u00e3o no Docker.**"
+          },
+          "response": [
+            {
+              "name": "Success - Stats Reais",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/containers/mylocalplace-api/stats",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "containers",
+                    "mylocalplace-api",
+                    "stats"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"cpu_percent\": 0.0,\n  \"memory_usage_mb\": 46.37,\n  \"memory_limit_mb\": 31192.2,\n  \"memory_percent\": 0.15,\n  \"network_rx_mb\": 0.02,\n  \"network_tx_mb\": 0.01\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Get System Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/system/metrics",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "system",
+                "metrics"
+              ]
+            },
+            "description": "M\u00e9tricas reais do sistema host.\n\n**CPU, RAM e Disk do sistema durante os testes.**"
+          },
+          "response": [
+            {
+              "name": "Success - Metrics Reais",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/system/metrics",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "system",
+                    "metrics"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"cpu_percent\": 27.3,\n  \"memory\": {\n    \"total_gb\": 30.46,\n    \"used_gb\": 19.29,\n    \"percent\": 69.9\n  },\n  \"disk\": {\n    \"total_gb\": 936.79,\n    \"used_gb\": 583.15,\n    \"percent\": 65.6\n  }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ]
+}

@@ -1,23 +1,38 @@
-version: '3.8'
-
 services:
+  # ==========================================
+  # API service - Development or Production
+  # ==========================================
   api:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
     container_name: mylocalplace-api
+    command: ["${API_COMMAND:-runserver}"]
     ports:
-      - "8000:8000"
+      - "${PORT:-8000}:${PORT:-8000}"
     volumes:
+      # Docker socket for container management
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Mount code only in development
+      - ./app:/app/app:${DEV_VOLUME:-ro}
     environment:
+      - PYTHONUNBUFFERED=1
       - DOCKER_HOST=unix:///var/run/docker.sock
-    restart: unless-stopped
+      - PORT=${PORT:-8000}
+      - WORKERS=${WORKERS:-4}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8000}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - mylocalplace-network
+    restart: unless-stopped
+    profiles: ["api"]
 
 networks:
   mylocalplace-network:
     driver: bridge
-

@@ -4,9 +4,10 @@ This module initializes and configures the FastAPI application,
 including middleware, CORS, and router registration.
 """
 
-from app.routers import containers_router, health_router, system_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.routers import containers_router, health_router, system_router
 
 # Create FastAPI application instance
 app = FastAPI(

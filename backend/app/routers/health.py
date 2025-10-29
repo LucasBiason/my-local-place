@@ -4,9 +4,10 @@ This module defines REST API endpoints for verifying API availability
 and Docker daemon connectivity.
 """
 
+from fastapi import APIRouter
+
 from app.core import docker_client
 from app.schemas import HealthResponse
-from fastapi import APIRouter
 
 router = APIRouter(tags=["Health"])
 

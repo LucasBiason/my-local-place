@@ -5,8 +5,9 @@ providing CPU, memory, and disk usage metrics for the host machine.
 """
 
 import psutil
-from app.schemas import SystemMetrics
 from fastapi import HTTPException, status
+
+from app.schemas import SystemMetrics
 
 
 class SystemController:
@@ -57,7 +58,9 @@ class SystemController:
                     "total_gb": round(
                         psutil.disk_usage("/").total / 1024**3, 2
                     ),
-                    "used_gb": round(psutil.disk_usage("/").used / 1024**3, 2),
+                    "used_gb": round(
+                        psutil.disk_usage("/").used / 1024**3, 2
+                    ),
                     "percent": psutil.disk_usage("/").percent,
                 },
             )

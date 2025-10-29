@@ -6,6 +6,8 @@ including listing, starting, stopping, and monitoring containers.
 
 from typing import List
 
+from fastapi import APIRouter, Query
+
 from app.controllers import ContainerController
 from app.repositories import DockerRepository
 from app.schemas import (
@@ -14,7 +16,6 @@ from app.schemas import (
     ContainerLogs,
     ContainerStats,
 )
-from fastapi import APIRouter, Query
 
 router = APIRouter(prefix="/api/v1/containers", tags=["Containers"])
 
@@ -126,7 +127,9 @@ async def restart_container(name: str) -> ContainerAction:
 @router.get("/{name}/logs", response_model=ContainerLogs)
 async def get_logs(
     name: str,
-    tail: int = Query(100, ge=1, le=1000, description="Number of log lines"),
+    tail: int = Query(
+        100, ge=1, le=1000, description="Number of log lines"
+    ),
 ) -> ContainerLogs:
     """Get container logs with timestamps.
 

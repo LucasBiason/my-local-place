@@ -4,9 +4,10 @@ This module defines REST API endpoints for retrieving host system
 resource metrics including CPU, memory, and disk usage.
 """
 
+from fastapi import APIRouter
+
 from app.controllers import SystemController
 from app.schemas import SystemMetrics
-from fastapi import APIRouter
 
 router = APIRouter(prefix="/api/v1/system", tags=["System"])
 

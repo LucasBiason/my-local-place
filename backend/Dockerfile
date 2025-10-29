@@ -1,7 +1,9 @@
-# MyLocalPlace Backend - Multi-stage Dockerfile
+# Multi-stage Dockerfile for MyLocalPlace Backend
 
-# Base stage - shared dependencies
-FROM python:3.13-slim as base
+# ============================================
+# Stage 1: Base - Dependencies
+# ============================================
+FROM python:3.13-slim AS base
 
 WORKDIR /app
 
@@ -14,23 +16,21 @@ RUN apt-get update && apt-get install -y \
 
 # Copy requirements
 COPY requirements.txt .
-
-# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Production stage
-FROM base as production
 
-# Copy application code
+# ============================================
+# Stage 2: Production - Clean and minimal
+# ============================================
+FROM base AS production
+
+# Copy only production code
 COPY app/ ./app/
 
 # Expose port
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
-
-# Run application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-
+# Copy and set entrypoint
+COPY --chmod=755 entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["runserver"]

@@ -1,324 +1,251 @@
-# 🏠 MyLocalPlace - Local Development Services Platform
+# MyLocalPlace v2.0 - Dashboard DevTools
 
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue.svg)](https://postgresql.org)
-[![Redis](https://img.shields.io/badge/Redis-7.4-red.svg)](https://redis.io)
-[![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3.13-orange.svg)](https://rabbitmq.com)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.13-blue.svg)](https://python.org)
+[![Tests](https://img.shields.io/badge/Tests-69%20passed-success.svg)](https://pytest.org)
+[![Coverage](https://img.shields.io/badge/Coverage-92.28%25-success.svg)](https://coverage.readthedocs.io)
 
-> **Complete local development environment with PostgreSQL 17, MongoDB, Redis 7.4, RabbitMQ, Kafka, Ollama, LangFlow and Streamlit management dashboard**
+> **Dashboard API for managing local Docker containers and development services**
 
-MyLocalPlace is a project that uses various tools and services to manage and analyze data. The project is configured to run in a Docker environment, making it easy to install and run the necessary services.
+FastAPI application for managing Docker containers locally. Provides REST API to start, stop, restart, view logs and monitor resource usage of containers.
 
-This Docker-configured environment includes the tools I use for local development, providing a complete infrastructure for AI/ML experimentation, microservices testing, and data analysis.
+## Features
 
-## 🌟 Key Features
+- REST API for Docker container management
+- Real-time container statistics (CPU, RAM, Network)
+- Container logs with timestamp
+- System resource monitoring
+- Unified Docker environment
+- 9 pre-configured services
 
-✨ **All-in-One Environment** - PostgreSQL, MongoDB, Redis, Ollama, LangFlow
-📊 **Streamlit Dashboard** - Visual management and observability
-🐳 **Docker Orchestrated** - Easy setup with docker-compose
-🔒 **Secure by Default** - Environment variables and secrets management
-⚡ **Quick Commands** - Makefile with useful shortcuts
-💾 **Backup Ready** - Automated backup scripts
+## Tech Stack
 
-## 🚀 Quick Start
+- **Backend**: FastAPI 0.115
+- **Docker SDK**: 7.1
+- **Python**: 3.13
+- **Validation**: Pydantic 2.10
+- **Server**: Uvicorn 0.32
+- **Testing**: pytest + coverage (92.28%)
+
+## Quick Start
 
 ### Prerequisites
 
 - Docker 24+
 - Docker Compose 2+
-- Make (optional)
+- Make
 
 ### Installation
 
-1. **Clone the repository**
 ```bash
 git clone https://github.com/LucasBiason/my-local-place.git
 cd my-local-place
 ```
 
-2. **Setup environment**
-```bash
-# Create .env from example
-cp .env.example .env
+### Run
 
-# Edit with your credentials
-nano .env
-```
-
-3. **Start all services**
 ```bash
-# Using Make
+# Start API + create all services (not started)
 make up
 
-# Or using Docker Compose directly
-docker compose up -d
+# Run tests
+make test
+
+# Stop all
+make down
 ```
 
-4. **Access Dashboard**
-```bash
-# Open browser at:
-http://localhost:8501
-```
+### Access
 
-## 📦 Services Included
+- **API**: http://localhost:8000
+- **Docs**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+
+## API Endpoints
+
+### Health
+- `GET /health` - Health check
+
+### Containers
+- `GET /api/v1/containers` - List all containers
+- `GET /api/v1/containers/{name}` - Get container details
+- `POST /api/v1/containers/{name}/start` - Start container
+- `POST /api/v1/containers/{name}/stop` - Stop container
+- `POST /api/v1/containers/{name}/restart` - Restart container
+- `GET /api/v1/containers/{name}/logs` - Get container logs
+- `GET /api/v1/containers/{name}/stats` - Get container stats
+
+### System
+- `GET /api/v1/system/metrics` - System metrics (CPU, RAM, Disk)
+
+## Services Managed
+
+The following services are **created** but **not started** automatically. Use the API to manage them:
 
 | Service | Port | Description |
 |---------|------|-------------|
-| 🐘 PostgreSQL 17 | 5432 | Relational database server |
-| 📊 PGAdmin | 8080 | PostgreSQL management UI |
-| ⚡ Redis 7.4 | 6379 | Cache and message broker |
-| 🐰 RabbitMQ | 5672, 15672 | Message queue + Management UI |
-| 🍃 MongoDB | 27017 | NoSQL document database |
-| 📨 Kafka | 9092 | Event streaming platform |
-| 🔍 Kafdrop | 19000 | Kafka UI |
-| ⛓️ LangFlow | 7860 | AI workflow builder |
-| 🦙 Ollama | 11434 | Local LLM server |
-| 🌐 OpenWebUI | 8082 | Ollama chat interface |
-| 📊 Dashboard | 8501 | Streamlit management dashboard |
+| local-postgres | 5432 | PostgreSQL 17 |
+| local-dbadmin | 8080 | PgAdmin 4 |
+| local-redis | 6379 | Redis 7.4 |
+| local-rabbitmq | 5672, 15672 | RabbitMQ 3.13 |
+| local-mongodb | 27017 | MongoDB latest |
+| local-langflow | 7860 | LangFlow AI |
+| local-ollama | 11434 | Ollama LLM |
+| local-openwebui | 3000 | Open WebUI |
+| local-jupyter | 8888 | Jupyter Notebook |
 
-## 🎯 Use Cases
-
-### 1. Machine Learning Development
-- PostgreSQL for structured data
-- MongoDB for unstructured data
-- Ollama for local LLMs
-- LangFlow for AI workflows
-
-### 2. Microservices Testing
-- PostgreSQL for production-like DB
-- Redis for caching and queues
-- MongoDB for document storage
-
-### 3. AI/LLM Experimentation
-- Ollama with multiple models
-- OpenWebUI for chat interface
-- LangFlow for agent building
-
-## 🛠️ Available Commands
+## Commands
 
 ```bash
-make setup     # Initial setup (.env creation)
-make build     # Build all services
-make up        # Start all services
-make down      # Stop all services
-make restart   # Restart all services
-make logs      # View logs in real-time
-make ps        # Container status
-make health    # Health check all services
-make clean     # Clean volumes and containers
-make backup    # Backup databases
+make test    # Run 69 unit tests (coverage 92.28%)
+make up      # Start API + create services
+make down    # Stop all containers
+make logs    # View API logs
+make clean   # Clean Docker cache
 ```
 
-## 📊 Dashboard Features
-
-Access the dashboard at `http://localhost:8501`
-
-### Features:
-- ✅ **Service Status** - Real-time status of all services
-- ✅ **Start/Stop/Restart** - Individual service control
-- ✅ **Logs Viewer** - View logs of each service
-- ✅ **System Metrics** - CPU, Memory, Disk usage
-- ✅ **Quick Actions** - Start/Stop all services at once
-
-### Dashboard Preview
-
-```
-🏠 MyLocalPlace Dashboard
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📊 System Info:     Total: 8   Running: 8   Stopped: 0
-
-Services:
-🐘 PostgreSQL   🟢 RUNNING  Port: 5432   [Stop] [Restart] [Logs]
-📊 PGAdmin      🟢 RUNNING  Port: 8080   [Stop] [Restart] [Logs]
-⚡ Redis        🟢 RUNNING  Port: 6379   [Stop] [Restart] [Logs]
-...
-```
-
-## 🔐 Environment Variables
-
-Required variables in `.env`:
-
-```env
-# PostgreSQL
-POSTGRES_USER=your-user
-POSTGRES_PASSWORD=your-password
-
-# PGAdmin
-PGADMIN_DEFAULT_EMAIL=your-email@example.com
-PGADMIN_DEFAULT_PASSWORD=your-password
-
-# Redis
-REDIS_PASSWORD=your-password
-
-# MongoDB
-ME_CONFIG_USERNAME=your-user
-ME_CONFIG_PASSWORD=your-password
-
-# LangFlow
-LANGFLOW_SUPERUSER=your-user
-LANGFLOW_SUPERUSER_PASSWORD=your-password
-
-# OpenAI (for LangFlow/Ollama)
-OPENAI_API_KEY=sk-your-key-here
-
-# OpenWebUI
-WEBUI_AUTH=your-username
-WEBUI_NAME=Your Dashboard Name
-```
-
-**⚠️ NEVER commit `.env` to git!**
-
-## 🔧 Troubleshooting
-
-### Services not starting?
+## Testing
 
 ```bash
-# Check Docker is running
-docker ps
+# Run tests with coverage
+make test
 
-# Check logs
-make logs
-
-# Restart all
-make restart
+# Results:
+# - 69 tests (100% passing)
+# - Coverage: 92.28%
+# - Report: backend/htmlcov/index.html
 ```
 
-### Port already in use?
+## Architecture
 
-Edit `docker-compose.yml` and change the port mapping:
+```
+MyLocalPlace API (Port 8000)
+├── Manages Docker containers
+├── Monitors system resources
+└── Provides REST API
 
-```yaml
-ports:
-  - "8080:8080"  # Change first number (host port)
+Services (Created, not started)
+├── local-postgres
+├── local-redis
+├── local-rabbitmq
+├── local-mongodb
+├── local-langflow
+├── local-ollama
+├── local-openwebui
+├── local-jupyter
+└── local-dbadmin
 ```
 
-### Dashboard can't connect to Docker?
+## Development
 
-Make sure Docker socket is mounted:
-
-```yaml
-volumes:
-  - /var/run/docker.sock:/var/run/docker.sock
-```
-
-### Health check failing?
-
-```bash
-# Check individual service
-make health
-
-# Check container logs
-docker logs local-postgres
-```
-
-## 💾 Backup & Restore
-
-### Backup
-
-```bash
-# Backup all databases
-make backup
-
-# Backups are saved in backups/ folder
-```
-
-### Restore
-
-```bash
-# PostgreSQL
-docker exec -i local-postgres psql -U postgres < backups/postgres_YYYYMMDD_HHMMSS.sql
-
-# MongoDB
-docker exec -i local-mongodb mongorestore --archive < backups/mongodb_YYYYMMDD_HHMMSS.archive
-```
-
-## 📁 Project Structure
+### Project Structure
 
 ```
 my-local-place/
-├── services/              # Service configurations
-│   ├── postgres.yml      # PostgreSQL + PGAdmin
-│   ├── redis.yml         # Redis
-│   ├── mongo.yml         # MongoDB
-│   ├── langflow.yml      # LangFlow
-│   ├── ollama.yml        # Ollama + OpenWebUI
-│   ├── kafka.yml         # Kafka (optional)
-│   └── mysql.yml         # MySQL (optional)
-│
-├── dashboard/            # Streamlit Dashboard
-│   ├── app.py           # Main dashboard
-│   ├── pages/           # Additional pages
+├── Makefile                 # Commands
+├── docker-compose.yml       # Orchestration
+├── docs/
+│   └── MyLocalPlace_API.postman_collection.json
+├── backend/
+│   ├── Dockerfile          # Multi-stage
+│   ├── entrypoint.sh       # Commands
 │   ├── requirements.txt
-│   └── Dockerfile
-│
-├── backups/             # Database backups
-│
-├── docker-compose.yml   # Main orchestration
-├── Makefile            # Useful commands
-├── .env.example        # Environment template
-├── .editorconfig       # Code style
-├── .gitignore          # Git ignore rules
-└── README.md           # This file
+│   ├── requirements-dev.txt
+│   ├── pytest.ini
+│   ├── .coveragerc
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── core/           # Docker client
+│   │   ├── repositories/   # Data access
+│   │   ├── controllers/    # Business logic
+│   │   ├── routers/        # Endpoints
+│   │   └── schemas/        # Validation
+│   └── tests/              # Unit tests
+└── services/               # Service configs
 ```
 
-## 🚀 Advanced Usage
+### Code Quality
 
-### Adding a New Service
+- **PEP8**: isort + black + flake8
+- **Docstrings**: Google style
+- **Type Hints**: 100%
+- **Pattern**: Repository Pattern
+- **Tests**: 92.28% coverage
 
-1. Create service config in `services/myservice.yml`
-2. Add to `docker-compose.yml`:
+## Postman Collection
 
-```yaml
-my-service:
-  extends:
-    file: services/myservice.yml
-    service: myservice
-  networks:
-    - local-services-network
+Import `docs/MyLocalPlace_API.postman_collection.json` to Postman.
+
+Contains:
+- 8 requests
+- 10 real examples (success + errors)
+- Variable: `{{base_url}}`
+
+## Environment Variables
+
+Create `.env` file (optional):
+
+```env
+# API Configuration
+PORT=8000
+WORKERS=4
+LOG_LEVEL=info
+
+# Services (for docker-compose extends)
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your-password
+# ... (see service configs)
 ```
 
-3. Update dashboard to include new service
+## Troubleshooting
 
-### Using with Your Projects
+### API not connecting to Docker?
 
-```yaml
-# In your project's docker-compose.yml
-networks:
-  default:
-    external: true
-    name: my-local-place_local-services-network
+Ensure Docker socket is accessible:
 
-services:
-  my-app:
-    ...
-    environment:
-      - DATABASE_URL=postgresql://user:pass@local-postgres:5432/mydb
+```bash
+ls -la /var/run/docker.sock
 ```
 
-## 📚 Documentation
+### Tests failing?
 
-- [Complete Roadmap](ROADMAP_COMPLETO.md) - Full evolution plan
-- [Service Configs](services/) - Individual service configurations
-- [Dashboard Guide](dashboard/) - Dashboard usage guide
+```bash
+# Clean and rebuild
+make down
+make test
+```
 
-## 🤝 Contributing
+### Port 8000 already in use?
 
-This is a personal project, but suggestions are welcome!
+```bash
+# Change port in docker-compose.yml
+PORT=8001 make up
+```
 
-## 📄 License
+## Roadmap
 
-MIT License - see [LICENSE](LICENSE) for details.
+- [x] Backend FastAPI
+- [x] Docker SDK integration
+- [x] REST API endpoints
+- [x] Unit tests (92% coverage)
+- [x] Postman Collection
+- [ ] Frontend React (next)
+- [ ] WebSocket logs
+- [ ] Real-time monitoring
 
-## 👤 Author
+## License
+
+MIT License
+
+## Author
 
 **Lucas Biason**
 - GitHub: [@LucasBiason](https://github.com/LucasBiason)
-- LinkedIn: [lucasbiason](https://linkedin.com/in/lucasbiason)
+- Project: [my-local-place](https://github.com/LucasBiason/my-local-place)
 
 ---
 
-**Status:** 🚀 Active Development
-**Version:** 2.0.0
-**Last Updated:** October 2025
+**Status**: Active Development
+**Version**: 2.0.0
+**Updated**: October 29, 2025

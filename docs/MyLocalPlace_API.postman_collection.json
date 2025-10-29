@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "mylocalplace-v2-api-real",
+		"_postman_id": "mylocalplace-v2-api",
 		"name": "MyLocalPlace v2.0 API",
-		"description": "# MyLocalPlace v2.0 - Dashboard DevTools API\n\nAPI REST para gerenciar containers Docker via dashboard web.\n\n## Base URL\n\n```\nhttp://localhost:8000\n```\n\n## Arquitetura\n\n- API sempre rodando no Docker\n- 9 servicos criados (gerenciados pela API)\n- Gerenciamento via Dashboard React\n\n## Tecnologias\n\n- FastAPI 0.115\n- Docker SDK 7.1\n- Python 3.13\n- Pydantic 2.10\n\n**IMPORTANTE: Todos os exemplos foram capturados da API rodando em Docker com dados 100% reais.**",
+		"description": "# MyLocalPlace v2.0 - Dashboard DevTools API\n\nAPI REST para gerenciar containers Docker via dashboard web.\n\n## Base URL\n\n```\nhttp://localhost:8000\n```\n\n## Endpoints\n\n### Health\n- `GET /health` - Health check\n\n### Containers\n- `GET /api/v1/containers` - List containers\n- `GET /api/v1/containers/{name}` - Get container details\n- `POST /api/v1/containers/{name}/start` - Start container\n- `POST /api/v1/containers/{name}/stop` - Stop container\n- `POST /api/v1/containers/{name}/restart` - Restart container\n- `GET /api/v1/containers/{name}/logs` - Get logs\n- `GET /api/v1/containers/{name}/stats` - Get stats\n\n### System\n- `GET /api/v1/system/metrics` - System metrics\n\n## Tech Stack\n\n- FastAPI 0.115\n- Docker SDK 7.1\n- Python 3.13\n- Coverage: 92.28%",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -18,12 +18,11 @@
 							"raw": "{{base_url}}/health",
 							"host": ["{{base_url}}"],
 							"path": ["health"]
-						},
-						"description": "Verifica status da API e conexao Docker.\n\nResponse capturado da API real rodando em Docker."
+						}
 					},
 					"response": [
 						{
-							"name": "Success - API Healthy (Real)",
+							"name": "Success",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
@@ -38,7 +37,7 @@
 							"_postman_previewlanguage": "json",
 							"header": [{"key": "Content-Type", "value": "application/json"}],
 							"cookie": [],
-							"body": "{\n  \"status\": \"healthy\",\n  \"docker_connected\": true,\n  \"timestamp\": \"2025-10-29T21:36:09.379099\",\n  \"version\": \"2.0.0\"\n}"
+							"body": "{\n  \"status\": \"healthy\",\n  \"docker_connected\": true,\n  \"timestamp\": \"2025-10-29T22:09:19.278399\",\n  \"version\": \"2.0.0\"\n}"
 						}
 					]
 				}
@@ -56,11 +55,30 @@
 							"raw": "{{base_url}}/api/v1/containers?all=true",
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "containers"],
-							"query": [{"key": "all", "value": "true", "description": "Include stopped containers"}]
-						},
-						"description": "Lista todos containers Docker.\n\nResponse real com 13 containers (9 servicos MyLocalPlace + 4 outros)."
+							"query": [{"key": "all", "value": "true"}]
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Success - 13 containers",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers?all=true",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers"],
+									"query": [{"key": "all", "value": "true"}]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "[{\"id\":\"ed6a539f9db9\",\"name\":\"local-dbadmin\",\"status\":\"created\",\"state\":\"created\",\"image\":\"dpage/pgadmin4:latest\",\"ports\":[],\"created\":\"2025-10-29T22:09:00.527558114Z\",\"running\":false},{\"id\":\"3fd0e293c58a\",\"name\":\"local-jupyter\",\"status\":\"created\",\"state\":\"created\",\"image\":\"jupyter/scipy-notebook:latest\",\"ports\":[],\"created\":\"2025-10-29T22:09:00.497095156Z\",\"running\":false},{\"id\":\"0c3b44b92959\",\"name\":\"local-openwebui\",\"status\":\"created\",\"state\":\"created\",\"image\":\"ghcr.io/open-webui/open-webui:main\",\"ports\":[],\"created\":\"2025-10-29T22:09:00.496899927Z\",\"running\":false},{\"id\":\"bdd1b3dd14f0\",\"name\":\"local-langflow\",\"status\":\"created\",\"state\":\"created\",\"image\":\"langflowai/langflow:latest\",\"ports\":[],\"created\":\"2025-10-29T22:09:00.496749793Z\",\"running\":false},{\"id\":\"8bc4e0d35bb6\",\"name\":\"local-ollama\",\"status\":\"created\",\"state\":\"created\",\"image\":\"ollama/ollama:latest\",\"ports\":[],\"created\":\"2025-10-29T22:09:00.496486462Z\",\"running\":false},{\"id\":\"d7f8569c5bb3\",\"name\":\"local-rabbitmq\",\"status\":\"created\",\"state\":\"created\",\"image\":\"rabbitmq:3.13-management-alpine\",\"ports\":[],\"created\":\"2025-10-29T22:09:00.496395037Z\",\"running\":false},{\"id\":\"1a790e10399f\",\"name\":\"local-postgres\",\"status\":\"created\",\"state\":\"created\",\"image\":\"postgres:17-alpine\",\"ports\":[],\"created\":\"2025-10-29T22:09:00.496316214Z\",\"running\":false},{\"id\":\"d804fc5a6c23\",\"name\":\"local-redis\",\"status\":\"created\",\"state\":\"created\",\"image\":\"redis:7.4-alpine\",\"ports\":[],\"created\":\"2025-10-29T22:09:00.496136472Z\",\"running\":false},{\"id\":\"7f4d75c0bf1a\",\"name\":\"local-mongodb\",\"status\":\"created\",\"state\":\"created\",\"image\":\"mongo:latest\",\"ports\":[],\"created\":\"2025-10-29T22:09:00.495911130Z\",\"running\":false},{\"id\":\"e2d42523c62c\",\"name\":\"mylocalplace-api\",\"status\":\"running\",\"state\":\"running\",\"image\":\"my-local-place-mylocalplace-api:latest\",\"ports\":[\"8000:8000/tcp\",\"8000:8000/tcp\"],\"created\":\"2025-10-29T22:09:00.264371656Z\",\"running\":true},{\"id\":\"335c2e12061a\",\"name\":\"ml-sales-frontend\",\"status\":\"exited\",\"state\":\"exited\",\"image\":\"ml-sales-forecasting-frontend:latest\",\"ports\":[],\"created\":\"2025-10-29T19:33:51.415961255Z\",\"running\":false},{\"id\":\"153083fd64a4\",\"name\":\"ml-sales-api\",\"status\":\"exited\",\"state\":\"exited\",\"image\":\"ml-sales-forecasting-api:latest\",\"ports\":[],\"created\":\"2025-10-29T19:33:51.401711452Z\",\"running\":false},{\"id\":\"58374daed73c\",\"name\":\"hungry_yalow\",\"status\":\"running\",\"state\":\"running\",\"image\":\"ghcr.io/github/github-mcp-server:latest\",\"ports\":[],\"created\":\"2025-10-27T23:07:04.63400244Z\",\"running\":true}]"
+						}
+					]
 				},
 				{
 					"name": "Get Container Details",
@@ -71,10 +89,64 @@
 							"raw": "{{base_url}}/api/v1/containers/mylocalplace-api",
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "containers", "mylocalplace-api"]
-						},
-						"description": "Detalhes completos de um container.\n\nResponse real com state, health check e todas as informacoes."
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Success - Running Container",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/mylocalplace-api",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "mylocalplace-api"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "{\"id\":\"e2d42523c62c\",\"name\":\"mylocalplace-api\",\"status\":\"running\",\"state\":{\"Status\":\"running\",\"Running\":true,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":2244243,\"ExitCode\":0,\"Error\":\"\",\"StartedAt\":\"2025-10-29T22:09:00.319033803Z\",\"FinishedAt\":\"0001-01-01T00:00:00Z\",\"Health\":{\"Status\":\"healthy\",\"FailingStreak\":0,\"Log\":[{\"Start\":\"2025-10-29T19:09:30.432494682-03:00\",\"End\":\"2025-10-29T19:09:30.626878773-03:00\",\"ExitCode\":0,\"Output\":\"  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\\n                                 Dload  Upload   Total   Spent    Left  Speed\\n\\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\\r100   103  100   103    0     0    856      0 --:--:-- --:--:-- --:--:--   858\\n{\\\"status\\\":\\\"healthy\\\",\\\"docker_connected\\\":true,\\\"timestamp\\\":\\\"2025-10-29T22:09:30.623995\\\",\\\"version\\\":\\\"2.0.0\\\"}\"}]}},\"image\":\"my-local-place-mylocalplace-api:latest\",\"ports\":[\"8000:8000/tcp\",\"8000:8000/tcp\"],\"created\":\"2025-10-29T22:09:00.264371656Z\",\"labels\":{\"com.docker.compose.config-hash\":\"a29d6fe5fe8ebe9c14b1c7c33ce033d5f6bc1fe67c3eb9f65a8e97c604a05e59\",\"com.docker.compose.container-number\":\"1\",\"com.docker.compose.depends_on\":\"\",\"com.docker.compose.image\":\"sha256:e7ff06e7c41a20df5b19a5cc31c73b07e9decc372aa69c6ea3e87e8e0d90e09c\",\"com.docker.compose.oneoff\":\"False\",\"com.docker.compose.project\":\"my-local-place\",\"com.docker.compose.project.config_files\":\"/home/lucas-biason/Projetos/Estudos/Projetos de Portifolio/my-local-place/docker-compose.yml\",\"com.docker.compose.project.working_dir\":\"/home/lucas-biason/Projetos/Estudos/Projetos de Portifolio/my-local-place\",\"com.docker.compose.service\":\"mylocalplace-api\",\"com.docker.compose.version\":\"2.32.1\"},\"running\":true}"
+						},
+						{
+							"name": "Success - Created Container",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "{\"id\":\"1a790e10399f\",\"name\":\"local-postgres\",\"status\":\"created\",\"state\":{\"Status\":\"created\",\"Running\":false,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":0,\"ExitCode\":0,\"Error\":\"\",\"StartedAt\":\"0001-01-01T00:00:00Z\",\"FinishedAt\":\"0001-01-01T00:00:00Z\"},\"image\":\"postgres:17-alpine\",\"ports\":[],\"created\":\"2025-10-29T22:09:00.496316214Z\",\"labels\":{\"com.docker.compose.config-hash\":\"1fb14c21802b6fde59cc9eb4ecedcd10a0c069a0869d4db9e5ac29e2e7abdb17\",\"com.docker.compose.container-number\":\"1\",\"com.docker.compose.depends_on\":\"\",\"com.docker.compose.image\":\"sha256:a6f8e1f15b5f5ba89ad4e80e6b46fc96ae4f4e6a4d5af9ce5e91c75aa78ee0d6\",\"com.docker.compose.oneoff\":\"False\",\"com.docker.compose.project\":\"my-local-place\",\"com.docker.compose.project.config_files\":\"/home/lucas-biason/Projetos/Estudos/Projetos de Portifolio/my-local-place/docker-compose.yml\",\"com.docker.compose.project.working_dir\":\"/home/lucas-biason/Projetos/Estudos/Projetos de Portifolio/my-local-place\",\"com.docker.compose.service\":\"local-postgres\",\"com.docker.compose.version\":\"2.32.1\"},\"running\":false}"
+						},
+						{
+							"name": "Error - 404 Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/container-inexistente",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "container-inexistente"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "{\n  \"detail\": \"Container container-inexistente not found\"\n}"
+						}
+					]
 				},
 				{
 					"name": "Start Container",
@@ -85,10 +157,28 @@
 							"raw": "{{base_url}}/api/v1/containers/local-postgres/start",
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "containers", "local-postgres", "start"]
-						},
-						"description": "Inicia um container parado.\n\nResponse real de container iniciado."
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/start",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "start"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"message\": \"Container local-postgres started\"\n}"
+						}
+					]
 				},
 				{
 					"name": "Stop Container",
@@ -99,10 +189,28 @@
 							"raw": "{{base_url}}/api/v1/containers/local-postgres/stop",
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "containers", "local-postgres", "stop"]
-						},
-						"description": "Para um container em execucao."
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/stop",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "stop"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"message\": \"Container local-postgres stopped\"\n}"
+						}
+					]
 				},
 				{
 					"name": "Restart Container",
@@ -113,10 +221,28 @@
 							"raw": "{{base_url}}/api/v1/containers/local-postgres/restart",
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "containers", "local-postgres", "restart"]
-						},
-						"description": "Reinicia um container."
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/restart",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "restart"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"message\": \"Container local-postgres restarted\"\n}"
+						}
+					]
 				},
 				{
 					"name": "Get Container Logs",
@@ -124,14 +250,52 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/v1/containers/mylocalplace-api/logs?tail=20",
+							"raw": "{{base_url}}/api/v1/containers/local-postgres/logs?tail=10",
 							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "containers", "mylocalplace-api", "logs"],
-							"query": [{"key": "tail", "value": "20"}]
-						},
-						"description": "Logs reais do container.\n\nResponse com logs capturados durante execucao."
+							"path": ["api", "v1", "containers", "local-postgres", "logs"],
+							"query": [{"key": "tail", "value": "10"}]
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/logs?tail=10",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "logs"],
+									"query": [{"key": "tail", "value": "10"}]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "{\"container\":\"local-postgres\",\"lines\":[\"2025-10-29T22:09:32.178103735Z \",\"2025-10-29T22:09:32.178148475Z PostgreSQL Database directory appears to contain a database; Skipping initialization\",\"2025-10-29T22:09:32.178151556Z \",\"2025-10-29T22:09:32.218957019Z 2025-10-29 22:09:32.218 UTC [1] LOG:  starting PostgreSQL 17.2 on x86_64-pc-linux-musl, compiled by gcc (Alpine 13.2.1_git20240309) 13.2.1 20240309, 64-bit\",\"2025-10-29T22:09:32.218998940Z 2025-10-29 22:09:32.218 UTC [1] LOG:  listening on IPv4 address \\\"0.0.0.0\\\", port 5432\",\"2025-10-29T22:09:32.219003531Z 2025-10-29 22:09:32.218 UTC [1] LOG:  listening on IPv6 address \\\"::\\\", port 5432\",\"2025-10-29T22:09:32.221928706Z 2025-10-29 22:09:32.221 UTC [1] LOG:  listening on Unix socket \\\"/var/run/postgresql/.s.PGSQL.5432\\\"\",\"2025-10-29T22:09:32.225033649Z 2025-10-29 22:09:32.224 UTC [44] LOG:  database system was shut down at 2025-10-29 21:10:55 UTC\",\"2025-10-29T22:09:32.228075824Z 2025-10-29 22:09:32.227 UTC [1] LOG:  database system is ready to accept connections\"],\"tail\":9}"
+						},
+						{
+							"name": "Error - 422 Validation",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/mylocalplace-api/logs?tail=5000",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "mylocalplace-api", "logs"],
+									"query": [{"key": "tail", "value": "5000"}]
+								}
+							},
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "{\n  \"detail\": [\n    {\n      \"type\": \"less_than_equal\",\n      \"loc\": [\"query\", \"tail\"],\n      \"msg\": \"Input should be less than or equal to 1000\",\n      \"input\": \"5000\",\n      \"ctx\": {\"le\": 1000}\n    }\n  ]\n}"
+						}
+					]
 				},
 				{
 					"name": "Get Container Stats",
@@ -139,13 +303,31 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/v1/containers/mylocalplace-api/stats",
+							"raw": "{{base_url}}/api/v1/containers/local-postgres/stats",
 							"host": ["{{base_url}}"],
-							"path": ["api", "v1", "containers", "mylocalplace-api", "stats"]
-						},
-						"description": "Estatisticas reais de CPU, RAM e Network.\n\nDados capturados durante execucao no Docker."
+							"path": ["api", "v1", "containers", "local-postgres", "stats"]
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/containers/local-postgres/stats",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "containers", "local-postgres", "stats"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "{\n  \"cpu_percent\": 0.0,\n  \"memory_usage_mb\": 28.91,\n  \"memory_limit_mb\": 31192.2,\n  \"memory_percent\": 0.09,\n  \"network_rx_mb\": 0.0,\n  \"network_tx_mb\": 0.0\n}"
+						}
+					]
 				}
 			]
 		},
@@ -161,10 +343,28 @@
 							"raw": "{{base_url}}/api/v1/system/metrics",
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "system", "metrics"]
-						},
-						"description": "Metricas reais do sistema host.\n\nCPU, RAM e Disk do sistema durante os testes."
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/system/metrics",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "system", "metrics"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{"key": "Content-Type", "value": "application/json"}],
+							"cookie": [],
+							"body": "{\n  \"cpu_percent\": 4.4,\n  \"memory\": {\n    \"total_gb\": 30.46,\n    \"used_gb\": 19.37,\n    \"percent\": 68.2\n  },\n  \"disk\": {\n    \"total_gb\": 936.79,\n    \"used_gb\": 586.81,\n    \"percent\": 66.0\n  }\n}"
+						}
+					]
 				}
 			]
 		}

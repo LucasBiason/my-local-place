@@ -179,27 +179,20 @@ export const useContainers = () => {
   /**
    * useEffect - Executa codigo quando componente monta
    * 
-   * Este eh um dos hooks mais importantes do React!
+   * NOVA ESTRATEGIA (sugestao do usuario):
+   * - Refresh completo: A cada 10 MINUTOS (600000ms)
+   * - Monitoramento: Cada container individualmente (useContainerStats)
    * 
-   * ESTRUTURA:
-   * useEffect(() => {
-   *   // Codigo a executar
-   *   return () => {
-   *     // Cleanup (limpeza) quando componente desmonta
-   *   }
-   * }, [dependencias]);
+   * RAZAO:
+   * Refresh a cada 5s era agressivo demais.
+   * Containers nao mudam tao rapido assim.
+   * Stats individuais ja monitoram containers rodando.
    * 
-   * DEPENDENCIAS ([]):
-   * - [] (vazio): Executa APENAS quando componente monta (1x)
-   * - [var]: Executa quando 'var' muda
-   * - Sem array: Executa em TODA re-renderizacao (cuidado!)
-   * 
-   * O QUE ESTE useEffect FAZ:
-   * 1. Busca containers imediatamente (fetchContainers())
-   * 2. Cria intervalo para buscar a cada 5000ms (5 segundos)
-   * 3. Retorna funcao de cleanup que limpa o intervalo
-   * 
-   * RESULTADO: Lista atualiza automaticamente a cada 5s
+   * BENEFICIOS:
+   * - Menos requests (1 a cada 10min vs 12 por minuto)
+   * - Menos processamento
+   * - Mesma funcionalidade
+   * - Monitoramento granular via stats individuais
    * 
    * POR QUE CLEANUP?
    * Se componente desmontar (usuario sair da pagina), precisamos
@@ -208,8 +201,8 @@ export const useContainers = () => {
   useEffect(() => {
     fetchContainers();  // Busca inicial
     
-    // Busca automatica a cada 5 segundos
-    const interval = setInterval(fetchContainers, 5000);
+    // Busca automatica a cada 10 MINUTOS
+    const interval = setInterval(fetchContainers, 600000);  // 600000ms = 10min
     
     // Cleanup: Para o intervalo quando componente desmontar
     return () => clearInterval(interval);

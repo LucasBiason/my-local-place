@@ -89,38 +89,54 @@ export const useContainers = () => {
   /**
    * ESTADO 2: loading
    * 
-   * Indica se estamos buscando dados da API.
-   * Comeca false, vira true durante fetch, volta false no final.
+   * Indica se estamos buscando dados da API PELA PRIMEIRA VEZ.
+   * Comeca true, vira false apos primeira busca bem-sucedida.
    * 
-   * UTILIDADE: Componente pode mostrar "Carregando..." enquanto loading=true
+   * ANTI-FLICKER:
+   * - true: Mostra skeleton (primeira carga)
+   * - false: Mostra dados (mesmo durante refresh em background)
+   * 
+   * UTILIDADE: Componente mostra skeleton apenas no inicio,
+   * nao a cada refresh (evita piscar).
    */
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);  // Comeca true
 
   /**
    * fetchContainers - Busca containers da API
    * 
    * Esta funcao:
-   * 1. Ativa loading (setLoading(true))
-   * 2. Chama listContainers() da API
-   * 3. Atualiza estado com setContainers(data)
-   * 4. Desativa loading (setLoading(false))
+   * 1. Chama listContainers() da API
+   * 2. Atualiza estado com setContainers(data)
+   * 3. Desativa loading (apenas primeira vez)
    * 
-   * TRY/CATCH/FINALLY:
+   * ANTI-FLICKER (otimizacao):
+   * NAO faz setLoading(true) a cada refresh!
+   * Apenas mantem loading=false apos primeira carga.
+   * 
+   * RESULTADO:
+   * - Primeira busca: Mostra skeleton (loading=true)
+   * - Proximas buscas: Atualiza em background (loading=false)
+   * - UI nao pisca a cada 5 segundos!
+   * 
+   * TRY/CATCH:
    * - try: Tenta executar codigo
    * - catch: Se der erro, captura e loga no console
-   * - finally: Sempre executa, erro ou nao (desativa loading)
+   * - Mantem dados anteriores (nao limpa containers)
    * 
    * ASYNC: Funcao assincrona para usar await com Promises
    */
   const fetchContainers = async () => {
-    setLoading(true);
     try {
       const data = await listContainers(true);  // Busca todos containers
       setContainers(data);  // Atualiza estado -> React re-renderiza
+      
+      // Desativa loading APENAS na primeira vez bem-sucedida
+      if (loading) {
+        setLoading(false);
+      }
     } catch (error) {
       console.error('Failed to fetch containers:', error);
-    } finally {
-      setLoading(false);  // Sempre desativa loading
+      // Mantem containers anteriores em caso de erro temporario
     }
   };
 

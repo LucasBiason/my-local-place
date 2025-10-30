@@ -12,6 +12,8 @@
 
 Modern web dashboard built with FastAPI (backend) and React + TypeScript (frontend) for managing Docker containers. Features real-time monitoring, resource alerts, and comprehensive container management.
 
+![MyLocalPlace Dashboard](docs/screenshots/dashboard.png)
+
 ## Features
 
 ### Backend API
@@ -27,9 +29,10 @@ Modern web dashboard built with FastAPI (backend) and React + TypeScript (fronte
 - Real-time container status display
 - Interactive controls (start, stop, restart)
 - Live log viewer
-- Resource usage charts
+- Resource usage charts with Recharts
 - Dark mode support
 - Responsive design
+- Container type icons with color classification
 
 ### Infrastructure
 - Unified Docker environment
@@ -52,6 +55,7 @@ Modern web dashboard built with FastAPI (backend) and React + TypeScript (fronte
 - **Framework**: React 18 + Vite 6
 - **Language**: TypeScript 5
 - **Styling**: TailwindCSS 3
+- **Charts**: Recharts 2
 - **HTTP Client**: Axios
 - **Icons**: Lucide React
 - **Build**: Multi-stage Docker + Nginx
@@ -143,6 +147,8 @@ The following services are **created** but **not started** automatically. Use th
 | local-openwebui | 3000 | Open WebUI |
 | local-jupyter | 8888 | Jupyter Notebook |
 
+See [CREDENCIAIS_SERVICOS.md](docs/CREDENCIAIS_SERVICOS.md) for access credentials.
+
 ## Commands
 
 ```bash
@@ -176,6 +182,11 @@ MyLocalPlace API (Port 8000)
 ├── Monitors system resources
 └── Provides REST API
 
+Frontend Dashboard (Port 3000)
+├── React + TypeScript
+├── Real-time charts
+└── Interactive controls
+
 Services (Created, not started)
 ├── local-postgres
 ├── local-redis
@@ -197,7 +208,10 @@ my-local-place/
 ├── Makefile                 # Commands
 ├── docker-compose.yml       # Orchestration
 ├── docs/
+│   ├── screenshots/
+│   │   └── dashboard.png
 │   ├── MyLocalPlace_API.postman_collection.json
+│   ├── CREDENCIAIS_SERVICOS.md
 │   └── LLM_SETUP.md        # LLM setup guide
 ├── backend/
 │   ├── Dockerfile          # Multi-stage build
@@ -226,7 +240,8 @@ my-local-place/
 │   │   ├── components/     # React components
 │   │   ├── hooks/          # Custom hooks
 │   │   ├── services/       # API client
-│   │   └── types/          # TypeScript types
+│   │   ├── types/          # TypeScript types
+│   │   └── utils/          # Utility functions
 │   └── public/             # Static assets
 └── services/               # Service configs (docker-compose extends)
 ```
@@ -234,7 +249,7 @@ my-local-place/
 ### Code Quality
 
 - **PEP8**: isort + black + flake8
-- **Docstrings**: Google style
+- **JSDoc**: Complete TypeScript documentation
 - **Type Hints**: 100%
 - **Pattern**: Repository Pattern
 - **Tests**: 92.28% coverage
@@ -260,9 +275,13 @@ LOG_LEVEL=info
 
 # Services (for docker-compose extends)
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your-password
-# ... (see service configs)
+POSTGRES_PASSWORD=postgres
+# ... (see docs/CREDENCIAIS_SERVICOS.md)
 ```
+
+## Autostart on Boot
+
+See [AUTOSTART_SYSTEMD.md](docs/AUTOSTART_SYSTEMD.md) for instructions to enable system autostart with systemd.
 
 ## Troubleshooting
 

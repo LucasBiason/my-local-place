@@ -79,6 +79,9 @@ Modern web dashboard built with FastAPI (backend) and React + TypeScript (fronte
 ```bash
 git clone https://github.com/LucasBiason/my-local-place.git
 cd my-local-place
+
+# Note your installation path for systemd configuration
+pwd
 ```
 
 ### Run
@@ -133,7 +136,7 @@ make down
 
 ## Services Managed
 
-The following services are **created** but **not started** automatically. Use the API to manage them:
+The following services are **created** but **not started** automatically. Use the dashboard or API to manage them:
 
 | Service | Port | Description |
 |---------|------|-------------|
@@ -146,8 +149,6 @@ The following services are **created** but **not started** automatically. Use th
 | local-ollama | 11434 | Ollama LLM |
 | local-openwebui | 3000 | Open WebUI |
 | local-jupyter | 8888 | Jupyter Notebook |
-
-See [CREDENCIAIS_SERVICOS.md](docs/CREDENCIAIS_SERVICOS.md) for access credentials.
 
 ## Commands
 
@@ -172,6 +173,97 @@ make test
 # - 69 tests (100% passing)
 # - Coverage: 92.28%
 # - Report: backend/htmlcov/index.html
+```
+
+## Autostart on Boot (Systemd)
+
+Configure MyLocalPlace to start automatically on system boot:
+
+### 1. Create Service File
+
+```bash
+sudo nano /etc/systemd/system/mylocalplace.service
+```
+
+### 2. Add Configuration
+
+```ini
+[Unit]
+Description=MyLocalPlace Docker Dashboard
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+WorkingDirectory=/absolute/path/to/my-local-place
+ExecStartPre=/usr/bin/docker compose down
+ExecStart=/usr/bin/docker compose up api frontend
+ExecStop=/usr/bin/docker compose down
+Restart=on-failure
+RestartSec=10s
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**Important**: 
+- Replace `YOUR_USERNAME` with your Linux username (run `whoami` to check)
+- Replace `/absolute/path/to/my-local-place` with the full path where you cloned the project (use `pwd` inside project directory)
+
+**Example**:
+```ini
+User=john
+WorkingDirectory=/home/john/projects/my-local-place
+```
+
+### 3. Enable and Start
+
+```bash
+# Reload systemd configuration
+sudo systemctl daemon-reload
+
+# Enable autostart
+sudo systemctl enable mylocalplace.service
+
+# Start service now
+sudo systemctl start mylocalplace.service
+
+# Check status
+sudo systemctl status mylocalplace.service
+```
+
+### 4. Verify
+
+```bash
+# View logs
+sudo journalctl -u mylocalplace.service -f
+
+# Test autostart
+sudo reboot
+```
+
+After reboot, MyLocalPlace will be available at http://localhost:3000
+
+### Systemd Commands
+
+```bash
+# Start
+sudo systemctl start mylocalplace.service
+
+# Stop
+sudo systemctl stop mylocalplace.service
+
+# Restart
+sudo systemctl restart mylocalplace.service
+
+# Disable autostart
+sudo systemctl disable mylocalplace.service
+
+# View status
+sudo systemctl status mylocalplace.service
 ```
 
 ## Architecture
@@ -207,12 +299,11 @@ Services (Created, not started)
 my-local-place/
 ├── Makefile                 # Commands
 ├── docker-compose.yml       # Orchestration
+├── CHANGELOG.md             # Version history
 ├── docs/
 │   ├── screenshots/
 │   │   └── dashboard.png
-│   ├── MyLocalPlace_API.postman_collection.json
-│   ├── CREDENCIAIS_SERVICOS.md
-│   └── LLM_SETUP.md        # LLM setup guide
+│   └── MyLocalPlace_API.postman_collection.json
 ├── backend/
 │   ├── Dockerfile          # Multi-stage build
 │   ├── entrypoint.sh       # Container commands
@@ -273,15 +364,18 @@ PORT=8000
 WORKERS=4
 LOG_LEVEL=info
 
-# Services (for docker-compose extends)
+# PostgreSQL
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
-# ... (see docs/CREDENCIAIS_SERVICOS.md)
+POSTGRES_PORT=5432
+
+# PgAdmin
+PGADMIN_DEFAULT_EMAIL=admin@mylocalplace.local
+PGADMIN_DEFAULT_PASSWORD=admin
+PGADMIN_CONFIG_SERVER_MODE=False
+
+# See services/*.yml for other service configurations
 ```
-
-## Autostart on Boot
-
-See [AUTOSTART_SYSTEMD.md](docs/AUTOSTART_SYSTEMD.md) for instructions to enable system autostart with systemd.
 
 ## Troubleshooting
 
@@ -291,6 +385,10 @@ Ensure Docker socket is accessible:
 
 ```bash
 ls -la /var/run/docker.sock
+
+# Add user to docker group if needed
+sudo usermod -aG docker $USER
+newgrp docker
 ```
 
 ### Tests failing?
@@ -301,11 +399,23 @@ make down
 make test
 ```
 
-### Port 8000 already in use?
+### Port 8000 or 3000 already in use?
 
 ```bash
-# Change port in docker-compose.yml
-PORT=8001 make up
+# Check what's using the ports
+sudo ss -tlnp | grep -E ':(3000|8000)'
+
+# Change port in docker-compose.yml if needed
+```
+
+### Systemd service not starting?
+
+```bash
+# View detailed logs
+sudo journalctl -u mylocalplace.service -xe
+
+# Check Docker is running
+sudo systemctl status docker.service
 ```
 
 ## Roadmap
@@ -336,6 +446,6 @@ MIT License
 
 ---
 
-**Status**: Production Ready
-**Version**: 2.0.0
+**Status**: Production Ready  
+**Version**: 2.0.0  
 **Updated**: October 30, 2025

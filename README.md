@@ -1,32 +1,66 @@
-# MyLocalPlace v2.0 - Dashboard DevTools
+# MyLocalPlace v2.0 - DevTools Dashboard
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com)
 [![Python](https://img.shields.io/badge/Python-3.13-blue.svg)](https://python.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://typescriptlang.org)
 [![Tests](https://img.shields.io/badge/Tests-69%20passed-success.svg)](https://pytest.org)
 [![Coverage](https://img.shields.io/badge/Coverage-92.28%25-success.svg)](https://coverage.readthedocs.io)
 
-> **Dashboard API for managing local Docker containers and development services**
+> **Full-stack Dashboard for managing local Docker containers and development services**
 
-FastAPI application for managing Docker containers locally. Provides REST API to start, stop, restart, view logs and monitor resource usage of containers.
+Modern web dashboard built with FastAPI (backend) and React + TypeScript (frontend) for managing Docker containers. Features real-time monitoring, resource alerts, and comprehensive container management.
 
 ## Features
 
+### Backend API
 - REST API for Docker container management
 - Real-time container statistics (CPU, RAM, Network)
-- Container logs with timestamp
-- System resource monitoring
+- Resource usage monitoring and alerts
+- Container logs with timestamp streaming
+- Volume management and cleanup
+- System metrics (CPU, Memory, Disk)
+
+### Frontend Dashboard
+- Modern React UI with TailwindCSS
+- Real-time container status display
+- Interactive controls (start, stop, restart)
+- Live log viewer
+- Resource usage charts
+- Dark mode support
+- Responsive design
+
+### Infrastructure
 - Unified Docker environment
-- 9 pre-configured services
+- 9 pre-configured services (Postgres, Redis, MongoDB, RabbitMQ, Ollama, etc.)
+- Systemd autostart capability
+- LLM support (Qwen2.5-Coder 3B installed)
 
 ## Tech Stack
 
-- **Backend**: FastAPI 0.115
-- **Docker SDK**: 7.1
-- **Python**: 3.13
+### Backend
+- **Framework**: FastAPI 0.115
+- **Docker**: Python SDK 7.1
+- **Language**: Python 3.13
 - **Validation**: Pydantic 2.10
 - **Server**: Uvicorn 0.32
-- **Testing**: pytest + coverage (92.28%)
+- **Testing**: pytest + httpx + coverage (92.28%)
+- **Tools**: psutil, websockets
+
+### Frontend
+- **Framework**: React 18 + Vite 6
+- **Language**: TypeScript 5
+- **Styling**: TailwindCSS 3
+- **HTTP Client**: Axios
+- **Icons**: Lucide React
+- **Build**: Multi-stage Docker + Nginx
+
+### Architecture
+- **Pattern**: Repository Pattern
+- **Code Quality**: PEP8, isort, black, flake8
+- **Testing**: Function-based, 69 tests, 92% coverage
+- **Deployment**: Docker Compose with profiles
 
 ## Quick Start
 
@@ -49,6 +83,9 @@ cd my-local-place
 # Start API + create all services (not started)
 make up
 
+# Start API + Frontend (full stack)
+make up-full
+
 # Run tests
 make test
 
@@ -58,8 +95,9 @@ make down
 
 ### Access
 
-- **API**: http://localhost:8000
-- **Docs**: http://localhost:8000/docs
+- **Frontend Dashboard**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
 - **ReDoc**: http://localhost:8000/redoc
 
 ## API Endpoints
@@ -78,6 +116,16 @@ make down
 
 ### System
 - `GET /api/v1/system/metrics` - System metrics (CPU, RAM, Disk)
+
+### Alerts
+- `GET /api/v1/alerts` - Get resource alerts and warnings
+
+### Volumes
+- `GET /api/v1/volumes` - List Docker volumes with usage info
+
+### Cleanup
+- `POST /api/v1/cleanup/containers` - Stop unused containers
+- `POST /api/v1/cleanup/volumes` - Remove unused volumes
 
 ## Services Managed
 
@@ -98,11 +146,14 @@ The following services are **created** but **not started** automatically. Use th
 ## Commands
 
 ```bash
-make test    # Run 69 unit tests (coverage 92.28%)
-make up      # Start API + create services
-make down    # Stop all containers
-make logs    # View API logs
-make clean   # Clean Docker cache
+make test      # Run 69 unit tests (coverage 92.28%)
+make up        # Start API only + create services
+make up-full   # Start API + Frontend (full stack)
+make down      # Stop all containers
+make logs      # View API logs
+make lint      # Run isort, black, flake8
+make format    # Format code (isort + black)
+make clean     # Clean Docker cache
 ```
 
 ## Testing
@@ -146,23 +197,38 @@ my-local-place/
 ├── Makefile                 # Commands
 ├── docker-compose.yml       # Orchestration
 ├── docs/
-│   └── MyLocalPlace_API.postman_collection.json
+│   ├── MyLocalPlace_API.postman_collection.json
+│   └── LLM_SETUP.md        # LLM setup guide
 ├── backend/
-│   ├── Dockerfile          # Multi-stage
-│   ├── entrypoint.sh       # Commands
-│   ├── requirements.txt
-│   ├── requirements-dev.txt
+│   ├── Dockerfile          # Multi-stage build
+│   ├── entrypoint.sh       # Container commands
+│   ├── requirements.txt    # Production deps
+│   ├── requirements-dev.txt # Dev/test deps
 │   ├── pytest.ini
 │   ├── .coveragerc
 │   ├── app/
-│   │   ├── main.py
-│   │   ├── core/           # Docker client
-│   │   ├── repositories/   # Data access
+│   │   ├── main.py         # FastAPI app
+│   │   ├── core/           # Docker client singleton
+│   │   ├── repositories/   # Data access layer
 │   │   ├── controllers/    # Business logic
-│   │   ├── routers/        # Endpoints
-│   │   └── schemas/        # Validation
-│   └── tests/              # Unit tests
-└── services/               # Service configs
+│   │   ├── routers/        # API endpoints
+│   │   └── schemas/        # Pydantic models
+│   └── tests/              # Unit tests (92% coverage)
+├── frontend/
+│   ├── Dockerfile          # Multi-stage (Node + Nginx)
+│   ├── nginx.conf          # Nginx config
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── tailwind.config.js
+│   ├── vite.config.ts
+│   ├── src/
+│   │   ├── App.tsx         # Main component
+│   │   ├── components/     # React components
+│   │   ├── hooks/          # Custom hooks
+│   │   ├── services/       # API client
+│   │   └── types/          # TypeScript types
+│   └── public/             # Static assets
+└── services/               # Service configs (docker-compose extends)
 ```
 
 ### Code Quality
@@ -230,9 +296,14 @@ PORT=8001 make up
 - [x] REST API endpoints
 - [x] Unit tests (92% coverage)
 - [x] Postman Collection
-- [ ] Frontend React (next)
-- [ ] WebSocket logs
-- [ ] Real-time monitoring
+- [x] Frontend React + TypeScript
+- [x] Real-time monitoring
+- [x] Resource alerts system
+- [x] Volume management
+- [x] LLM integration (Qwen2.5-Coder 3B)
+- [ ] WebSocket logs (future)
+- [ ] Container compose orchestration (future)
+- [ ] Multi-host support (future)
 
 ## License
 
@@ -246,6 +317,6 @@ MIT License
 
 ---
 
-**Status**: Active Development
+**Status**: Production Ready
 **Version**: 2.0.0
-**Updated**: October 29, 2025
+**Updated**: October 30, 2025

@@ -10,7 +10,7 @@
  * FUNCIONALIDADE:
  * - Verifica se API esta respondendo
  * - Verifica se Docker esta conectado
- * - Atualiza automaticamente a cada 10 segundos
+ * - Atualiza automaticamente a cada 10 minutos
  * - Usado para mostrar indicador de conexao no header
  * 
  * ============================================================================
@@ -75,14 +75,13 @@ export const useHealth = () => {
    * ESTRUTURA:
    * 1. Define funcao fetchHealth() dentro do useEffect
    * 2. Chama fetchHealth() imediatamente (busca inicial)
-   * 3. Cria intervalo para repetir a cada 10 segundos
+   * 3. Cria intervalo para repetir a cada 10 minutos
    * 4. Retorna cleanup que para o intervalo
    * 
    * POR QUE FUNCAO DENTRO DE useEffect?
    * Funcoes async nao podem ser passadas diretamente para useEffect.
    * Solucao: Criar funcao async dentro e chamar ela.
-   * 
-   * INTERVALO: 10000ms = 10 segundos
+   * INTERVALO: 600000ms = 10 minutos
    * Mais lento que useContainers (5s) pois health check eh menos critico.
    */
   useEffect(() => {

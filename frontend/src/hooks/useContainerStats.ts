@@ -82,6 +82,10 @@ export const useContainerStats = (
    * 
    * INTERVALO: 5000ms = 5 segundos
    * Mesmo intervalo de useContainers para sincronizar.
+   * 
+   * OTIMIZACAO ANTI-FLICKER:
+   * Mantem ultimo valor ate novo chegar. Nao limpa stats durante fetch.
+   * Isso evita "piscada" da UI.
    */
   useEffect(() => {
     /**
@@ -99,17 +103,21 @@ export const useContainerStats = (
      * fetchStats - Busca metricas do container
      * 
      * TRY/CATCH:
-     * Se der erro (container acabou de parar), apenas loga.
-     * Nao quebra UI.
+     * Se der erro (container acabou de parar), MANTEM ultimo valor.
+     * Apenas loga erro.
+     * 
+     * ANTI-FLICKER:
+     * Nao faz setStats(null) durante erro temporario.
+     * UI mantem valor anterior ate conseguir novo ou container parar.
      */
     const fetchStats = async () => {
       try {
         const data = await getContainerStats(containerName);
-        setStats(data);
+        setStats(data);  // Atualiza apenas em sucesso
       } catch (error) {
-        // Container pode ter parado entre checagens
+        // Container pode ter parado ou erro temporario de rede
+        // MANTEM stats anterior para evitar flicker
         console.error(`Failed to fetch stats for ${containerName}:`, error);
-        setStats(null);
       }
     };
 

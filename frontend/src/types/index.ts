@@ -39,6 +39,16 @@ export type Container = {
 };
 
 /**
+ * ContainerWithStats - Container + suas estatisticas
+ * 
+ * Combina informacoes do container com suas metricas de uso.
+ * Usado quando precisamos exibir card com metricas em tempo real.
+ */
+export type ContainerWithStats = Container & {
+  stats?: ContainerStats | null;
+};
+
+/**
  * ContainerStats - Estatisticas de uso de recursos de um container
  * 
  * Representa os dados de CPU, memoria e rede que um container esta usando

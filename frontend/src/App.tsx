@@ -63,7 +63,7 @@ import { ContainerGrid } from './components/ContainerGrid';
 import { Header } from './components/Header';
 import { LogsModal } from './components/LogsModal';
 import { SearchAndFilters } from './components/SearchAndFilters';
-import { SystemMetrics } from './components/SystemMetrics';
+import { SystemMetricsChart } from './components/SystemMetricsChart';
 import { useContainerFilter } from './hooks/useContainerFilter';
 import { useContainers } from './hooks/useContainers';
 import { useHealth } from './hooks/useHealth';
@@ -142,7 +142,7 @@ const App = () => {
    * - px-6 py-8: Padding horizontal/vertical
    */
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-900">
       {/* 
         HEADER 
         
@@ -164,7 +164,7 @@ const App = () => {
           Mostra cards de CPU, RAM, Disco no topo.
           Recebe 'metrics' via prop.
         */}
-        <SystemMetrics metrics={systemMetrics} />
+        <SystemMetricsChart metrics={systemMetrics} />
 
         {/* 
           SearchAndFilters 

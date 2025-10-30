@@ -32,7 +32,8 @@
  * }
  */
 
-import { Activity, Box } from 'lucide-react';
+import { Activity } from 'lucide-react';
+import { Logo } from './Logo';
 import type { HealthStatus } from '../types';
 
 /**
@@ -75,7 +76,7 @@ export const Header = ({ health }: HeaderProps) => {
    *       {health && <div>} - Status (condicional)
    */
   return (
-    <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
+    <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white shadow-2xl border-b border-blue-700">
       {/*
         TAILWIND CLASSES:
         - bg-gradient-to-r: Gradiente da esquerda para direita
@@ -101,37 +102,8 @@ export const Header = ({ health }: HeaderProps) => {
             - justify-between: Espaco entre itens (logo <-> status)
           */}
           
-          <div className="flex items-center gap-4">
-            {/*
-              LOGO + TITULO
-              - gap-4: Espaco de 1rem entre logo e texto
-            */}
-            
-            {/* 
-              LUCIDE ICON: Box
-              
-              Importado de 'lucide-react'.
-              Componente que renderiza icone SVG.
-              - w-10 h-10: Largura e altura de 2.5rem
-            */}
-            <Box className="w-10 h-10" />
-            
-            <div>
-              <h1 className="text-3xl font-bold">MyLocalPlace</h1>
-              {/*
-                H1 - Titulo principal
-                - text-3xl: Font size 1.875rem
-                - font-bold: Peso da fonte 700
-              */}
-              
-              <p className="text-blue-100 text-sm">Docker Container Management</p>
-              {/*
-                Subtitulo
-                - text-blue-100: Cor azul clara
-                - text-sm: Font size 0.875rem
-              */}
-            </div>
-          </div>
+          {/* Logo com design moderno */}
+          <Logo />
 
           {/*
             RENDERIZACAO CONDICIONAL: {health && <div>}

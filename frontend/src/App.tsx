@@ -60,6 +60,7 @@
 
 import { useState } from 'react';
 import { ContainerGrid } from './components/ContainerGrid';
+import { ContainersComparisonChart } from './components/ContainersComparisonChart';
 import { Header } from './components/Header';
 import { LogsModal } from './components/LogsModal';
 import { SearchAndFilters } from './components/SearchAndFilters';
@@ -167,8 +168,11 @@ const App = () => {
         */}
         <SystemMetricsChart metrics={systemMetrics} />
         
-        {/* Grafico unico de uso do sistema */}
-        <SystemUsageChart metrics={systemMetrics} />
+        {/* Graficos de monitoramento */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+          <SystemUsageChart metrics={systemMetrics} />
+          <ContainersComparisonChart containers={containers} />
+        </div>
 
         {/* 
           SearchAndFilters 

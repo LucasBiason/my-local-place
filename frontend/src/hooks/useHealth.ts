@@ -70,51 +70,59 @@ export const useHealth = () => {
   const [health, setHealth] = useState<HealthStatus | null>(null);
 
   /**
-   * useEffect - Busca health check periodicamente
+   * useEffect - Busca health check APENAS UMA VEZ
    * 
-   * ESTRUTURA:
-   * 1. Define funcao fetchHealth() dentro do useEffect
-   * 2. Chama fetchHealth() imediatamente (busca inicial)
-   * 3. Cria intervalo para repetir a cada 10 minutos
-   * 4. Retorna cleanup que para o intervalo
+   * MUDANCA DE ESTRATEGIA (sugestao do usuario):
+   * Antes: Polling a cada 10s (desnecessario)
+   * Agora: Busca apenas 1x no inicio
    * 
-   * POR QUE FUNCAO DENTRO DE useEffect?
-   * Funcoes async nao podem ser passadas diretamente para useEffect.
-   * Solucao: Criar funcao async dentro e chamar ela.
-   * INTERVALO: 600000ms = 10 minutos
-   * Mais lento que useContainers (5s) pois health check eh menos critico.
+   * RAZAO:
+   * useContainers e useSystemMetrics ja monitoram API continuamente (5s).
+   * Se API cair, eles vao detectar.
+   * Health check so precisa validar INICIALMENTE se API esta operante.
+   * 
+   * BENEFICIOS:
+   * - Menos requests (1 vs infinitos)
+   * - Menos processamento
+   * - Mais eficiente
+   * - Mesma funcionalidade
+   * 
+   * DEPENDENCIAS: []
+   * Array vazio = executa APENAS quando componente monta (1x)
+   * NUNCA mais executa, mesmo com re-renders.
    */
   useEffect(() => {
     /**
      * fetchHealth - Busca status de saude da API
      * 
-     * TRY/CATCH SEM FINALLY:
-     * - try: Tenta buscar dados e atualizar estado
-     * - catch: Se API estiver offline, apenas loga erro
+     * EXECUCAO UNICA:
+     * Esta funcao executa apenas 1x (no mount do App).
      * 
-     * NOTA: Nao tem setLoading aqui pois nao mostramos "carregando"
-     * para health check. Apenas atualizamos quando conseguimos.
+     * TRY/CATCH:
+     * - try: API online -> setHealth(data)
+     * - catch: API offline -> setHealth(null)
+     * 
+     * RESULTADO:
+     * Header mostra status baseado na resposta inicial.
+     * Se API estiver online, mostra "Docker Connected".
+     * Se offline, nao mostra nada (health=null).
      */
     const fetchHealth = async () => {
       try {
         const data = await healthCheck();
-        setHealth(data);  // Atualiza estado com dados da API
+        setHealth(data);  // API online
       } catch (error) {
-        // API offline ou erro de rede
         console.error('Health check failed:', error);
-        // Poderiamos fazer: setHealth(null) aqui para indicar offline
+        setHealth(null);  // API offline
       }
     };
 
-    // Busca imediata ao montar componente
+    // Busca UNICA ao montar componente
     fetchHealth();
     
-    // Busca automatica a cada 10 segundos
-    const interval = setInterval(fetchHealth, 10000);
-    
-    // Cleanup: Para intervalo ao desmontar
-    return () => clearInterval(interval);
-  }, []);  // [] = Executa apenas no mount, nunca mais
+    // SEM setInterval!
+    // SEM cleanup necessario!
+  }, []);  // [] = Executa apenas no mount, NUNCA mais
 
   /**
    * RETORNO DIRETO

@@ -12,7 +12,6 @@
 
 import { FileText, Play, RotateCw, Square } from 'lucide-react';
 import { useState } from 'react';
-import { useContainerStats } from '../hooks/useContainerStats';
 import type { Container } from '../types';
 import {
   getContainerCornerColor,
@@ -38,9 +37,6 @@ export const ContainerCard = ({
   onViewLogs,
 }: Props) => {
   const [loading, setLoading] = useState(false);
-  
-  // Busca stats apenas se container esta rodando
-  const stats = useContainerStats(container.name, container.running);
 
   const handleAction = async (action: () => void) => {
     setLoading(true);
@@ -97,56 +93,6 @@ export const ContainerCard = ({
             {container.status.toUpperCase()}
           </span>
         </div>
-
-        {/* METRICAS (se container rodando) */}
-        {isRunning && stats && (
-          <div className="mb-4 space-y-3 bg-gray-900/50 rounded-lg p-4">
-            {/* CPU */}
-            <div>
-              <div className="flex justify-between text-xs font-medium mb-1.5">
-                <span className="text-gray-400">CPU</span>
-                <span className="text-green-400 font-bold">
-                  {stats.cpu_percent.toFixed(1)}%
-                </span>
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-green-500 to-green-400 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(stats.cpu_percent, 100)}%` }}
-                />
-              </div>
-            </div>
-
-            {/* MEMORIA */}
-            <div>
-              <div className="flex justify-between text-xs font-medium mb-1.5">
-                <span className="text-gray-400">Memory</span>
-                <span className="text-blue-400 font-bold">
-                  {stats.memory_percent.toFixed(1)}%
-                </span>
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-blue-500 to-blue-400 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(stats.memory_percent, 100)}%` }}
-                />
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                {stats.memory_usage_mb.toFixed(0)} / {stats.memory_limit_mb.toFixed(0)} MB
-              </div>
-            </div>
-
-            {/* NETWORK */}
-            <div className="flex justify-between text-xs">
-              <span className="text-gray-400">
-                ↓ {stats.network_rx_mb.toFixed(1)} MB
-              </span>
-              <span className="text-gray-400">
-                ↑ {stats.network_tx_mb.toFixed(1)} MB
-              </span>
-            </div>
-          </div>
-        )}
 
         {/* INFO */}
         {container.ports.length > 0 && (

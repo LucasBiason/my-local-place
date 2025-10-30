@@ -64,6 +64,7 @@ import { Header } from './components/Header';
 import { LogsModal } from './components/LogsModal';
 import { SearchAndFilters } from './components/SearchAndFilters';
 import { SystemMetricsChart } from './components/SystemMetricsChart';
+import { SystemUsageChart } from './components/SystemUsageChart';
 import { useContainerFilter } from './hooks/useContainerFilter';
 import { useContainers } from './hooks/useContainers';
 import { useHealth } from './hooks/useHealth';
@@ -165,6 +166,9 @@ const App = () => {
           Recebe 'metrics' via prop.
         */}
         <SystemMetricsChart metrics={systemMetrics} />
+        
+        {/* Grafico unico de uso do sistema */}
+        <SystemUsageChart metrics={systemMetrics} />
 
         {/* 
           SearchAndFilters 

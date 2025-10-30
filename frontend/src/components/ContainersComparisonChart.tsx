@@ -107,19 +107,6 @@ export const ContainersComparisonChart = ({ containers }: Props) => {
           >
             Memory
           </button>
-          
-          <button
-            onClick={() => toggleMetric('disk')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              selectedMetrics.includes('disk')
-                ? 'bg-yellow-600 text-white shadow-md'
-                : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-            }`}
-            disabled
-            title="Docker SDK does not provide disk stats per container"
-          >
-            Disk
-          </button>
         </div>
       </div>
 
@@ -179,15 +166,6 @@ export const ContainersComparisonChart = ({ containers }: Props) => {
               dataKey="memory" 
               fill="#3b82f6" 
               name="Memory %" 
-              radius={[8, 8, 0, 0]}
-            />
-          )}
-          
-          {selectedMetrics.includes('disk') && (
-            <Bar 
-              dataKey="disk" 
-              fill="#f59e0b" 
-              name="Disk %" 
               radius={[8, 8, 0, 0]}
             />
           )}

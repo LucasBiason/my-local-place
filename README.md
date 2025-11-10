@@ -1,12 +1,18 @@
-# MyLocalPlace v2.0 - DevTools Dashboard
+<div align="center">
+  <img src="docs/assets/my-local-place-banner.png" alt="MyLocalPlace banner" width="100%" />
+</div>
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com)
-[![React](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev)
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com)
-[![Python](https://img.shields.io/badge/Python-3.13-blue.svg)](https://python.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://typescriptlang.org)
-[![Tests](https://img.shields.io/badge/Tests-69%20passed-success.svg)](https://pytest.org)
-[![Coverage](https://img.shields.io/badge/Coverage-92.28%25-success.svg)](https://coverage.readthedocs.io)
+<div align="center">
+  <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.115-green.svg" alt="FastAPI" /></a>
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-18-61DAFB.svg" alt="React" /></a>
+  <a href="https://docker.com"><img src="https://img.shields.io/badge/Docker-Ready-blue.svg" alt="Docker" /></a>
+  <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.13-blue.svg" alt="Python 3.13" /></a>
+  <a href="https://typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5-3178C6.svg" alt="TypeScript 5" /></a>
+  <a href="https://pytest.org"><img src="https://img.shields.io/badge/Tests-69%20passed-success.svg" alt="Tests" /></a>
+  <a href="https://coverage.readthedocs.io"><img src="https://img.shields.io/badge/Coverage-92.28%25-success.svg" alt="Coverage" /></a>
+</div>
+
+# MyLocalPlace v2.0 - DevTools Dashboard
 
 > **Full-stack Dashboard for managing local Docker containers and development services**
 
@@ -103,9 +109,9 @@ make down
 ### Access
 
 - **Frontend Dashboard**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+- **Backend API**: http://localhost:8800
+- **API Docs**: http://localhost:8800/docs
+- **ReDoc**: http://localhost:8800/redoc
 
 ## API Endpoints
 
@@ -269,7 +275,7 @@ sudo systemctl status mylocalplace.service
 ## Architecture
 
 ```
-MyLocalPlace API (Port 8000)
+MyLocalPlace API (Port 8800)
 ├── Manages Docker containers
 ├── Monitors system resources
 └── Provides REST API

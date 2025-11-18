@@ -21,7 +21,7 @@ services:
   # ==========================================
   # MyLocalPlace API - ALWAYS RUNNING
   # ==========================================
-  mylocalplace-api:
+  api:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -29,7 +29,7 @@ services:
     container_name: mylocalplace-api
     command: ["runserver"]
     ports:
-      - "8000:8000"
+      - "8800:8000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
@@ -60,9 +60,9 @@ services:
     ports:
       - "3000:80"
     depends_on:
-      - mylocalplace-api
+      - api
     environment:
-      - VITE_API_URL=http://localhost:8000
+      - VITE_API_URL=http://localhost:8800
     networks:
       - local-services-network
     restart: unless-stopped
@@ -202,6 +202,64 @@ services:
       - local-services-network
     profiles: ["services"]
 
+  notion-mcp:
+    build:
+      context: ./services/external/notion-automation-suite
+      dockerfile: Dockerfile
+    container_name: mylocalplace-notion-mcp
+    env_file:
+      - configs/notion-mcp.env
+    working_dir: /app
+    entrypoint:
+      - sleep
+      - infinity
+    networks:
+      - local-services-network
+    restart: unless-stopped
+    profiles: ["mcp"]
+
+  # ==========================================
+  # Monitoring Stack (Prometheus + Grafana)
+  # ==========================================
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: mylocalplace-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+    networks:
+      - local-services-network
+    depends_on:
+      - api
+    restart: unless-stopped
+    profiles: ["monitoring"]
+
+  grafana:
+    image: grafana/grafana:11.0.0
+    container_name: mylocalplace-grafana
+    ports:
+      - "3030:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - local-services-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    profiles: ["monitoring"]
+
 volumes:
   postgres_data:
   pgadmin_data:
@@ -212,6 +270,8 @@ volumes:
   ollama_data:
   openwebui_data:
   jupyter_workspace:
+  prometheus_data:
+  grafana_data:
 
 networks:
   local-services-network:

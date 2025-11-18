@@ -19,7 +19,7 @@ help:
 	@echo "  Use the MyLocalPlace Dashboard to start/stop services."
 	@echo ""
 	@echo "Architecture:"
-	@echo "  - API: http://localhost:8000 (always running)"
+	@echo "  - API: http://localhost:8800 (always running)"
 	@echo "  - Frontend: http://localhost:3000 (optional)"
 	@echo "  - Services: Managed via API/Dashboard"
 
@@ -37,7 +37,7 @@ dev:
 	@echo "Starting API in DEVELOPMENT mode (hot reload)..."
 	@echo ""
 	@docker compose down 2>/dev/null || true
-	@API_COMMAND=dev DEV_VOLUME=rw LOG_LEVEL=debug docker compose up --build mylocalplace-api
+	@API_COMMAND=dev DEV_VOLUME=rw LOG_LEVEL=debug docker compose up --build api
 	@echo ""
 	@echo "API stopped."
 
@@ -51,21 +51,24 @@ dev-full:
 
 build:
 	@echo "Building PRODUCTION images..."
-	docker compose build --no-cache mylocalplace-api frontend
+	docker compose build --no-cache api frontend
 	@echo "Production images built!"
 
 up:
 	@echo "Starting MyLocalPlace API..."
 	@echo ""
 	@docker compose down 2>/dev/null || true
-	@docker compose up -d mylocalplace-api
+	@docker compose up -d api
+	@echo ""
+	@echo "Starting Notion MCP service..."
+	@docker compose --profile mcp up -d notion-mcp
 	@echo ""
 	@echo "Creating service containers (not started)..."
 	@docker compose --profile services create
 	@echo ""
 	@echo "All containers ready!"
-	@echo "  API: http://localhost:8000"
-	@echo "  Docs: http://localhost:8000/docs"
+	@echo "  API: http://localhost:8800"
+	@echo "  Docs: http://localhost:8800/docs"
 	@echo ""
 	@echo "Use the Dashboard to start services on demand."
 	@echo ""
@@ -77,13 +80,16 @@ up-full:
 	@docker compose --profile full down 2>/dev/null || true
 	@docker compose --profile full up -d
 	@echo ""
+	@echo "Starting Notion MCP service..."
+	@docker compose --profile mcp up -d notion-mcp
+	@echo ""
 	@echo "Creating service containers (not started)..."
 	@docker compose --profile services create
 	@echo ""
 	@echo "All ready!"
 	@echo "  Frontend: http://localhost:3000"
-	@echo "  API: http://localhost:8000"
-	@echo "  Docs: http://localhost:8000/docs"
+	@echo "  API: http://localhost:8800"
+	@echo "  Docs: http://localhost:8800/docs"
 	@echo ""
 	@echo "View logs: make logs"
 
@@ -91,13 +97,14 @@ down:
 	@echo "Stopping all containers..."
 	@docker compose down
 	@docker compose --profile services down
+	@docker compose --profile mcp down
 	@docker compose --profile test down 2>/dev/null || true
 	@echo "All containers stopped!"
 
 logs:
 	@echo "MyLocalPlace API logs (Ctrl+C to exit):"
 	@echo ""
-	@docker compose logs -f mylocalplace-api
+	@docker compose logs -f api
 
 clean:
 	@echo "Cleaning Docker cache..."

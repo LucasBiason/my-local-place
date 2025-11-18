@@ -251,6 +251,8 @@ logs/
 # Configuration files with sensitive data
 .env.*
 !.env.example
+configs/notion-mcp.env
+configs/github-mcp.env
 config.ini
 secrets.json
 credentials.json

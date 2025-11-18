@@ -121,6 +121,6 @@ npm run preview  # Preview do build
 Crie `.env`:
 
 ```env
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=http://localhost:8800
 ```
 

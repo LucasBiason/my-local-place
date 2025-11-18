@@ -12,7 +12,7 @@ import type { Container, ContainerLogs, ContainerStats, HealthStatus, SystemMetr
 /**
  * Base API URL from environment or default.
  */
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8800';
 
 /**
  * Configured axios instance with base URL and headers.

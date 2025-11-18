@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "mylocalplace-v2-api",
 		"name": "MyLocalPlace v2.0 API",
-		"description": "# MyLocalPlace v2.0 - Dashboard DevTools API\n\nAPI REST para gerenciar containers Docker via dashboard web.\n\n## Base URL\n\n```\nhttp://localhost:8000\n```\n\n## Endpoints\n\n### Health\n- `GET /health` - Health check\n\n### Containers\n- `GET /api/v1/containers` - List containers\n- `GET /api/v1/containers/{name}` - Get container details\n- `POST /api/v1/containers/{name}/start` - Start container\n- `POST /api/v1/containers/{name}/stop` - Stop container\n- `POST /api/v1/containers/{name}/restart` - Restart container\n- `GET /api/v1/containers/{name}/logs` - Get logs\n- `GET /api/v1/containers/{name}/stats` - Get stats\n\n### System\n- `GET /api/v1/system/metrics` - System metrics\n\n## Tech Stack\n\n- FastAPI 0.115\n- Docker SDK 7.1\n- Python 3.13\n- Coverage: 92.28%",
+		"description": "# MyLocalPlace v2.0 - Dashboard DevTools API\n\nAPI REST para gerenciar containers Docker via dashboard web.\n\n## Base URL\n\n```\nhttp://localhost:8800\n```\n\n## Endpoints\n\n### Health\n- `GET /health` - Health check\n\n### Containers\n- `GET /api/v1/containers` - List containers\n- `GET /api/v1/containers/{name}` - Get container details\n- `POST /api/v1/containers/{name}/start` - Start container\n- `POST /api/v1/containers/{name}/stop` - Stop container\n- `POST /api/v1/containers/{name}/restart` - Restart container\n- `GET /api/v1/containers/{name}/logs` - Get logs\n- `GET /api/v1/containers/{name}/stats` - Get stats\n\n### System\n- `GET /api/v1/system/metrics` - System metrics\n\n## Tech Stack\n\n- FastAPI 0.115\n- Docker SDK 7.1\n- Python 3.13\n- Coverage: 92.28%",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -372,7 +372,7 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:8000",
+			"value": "http://localhost:8800",
 			"type": "string"
 		}
 	]

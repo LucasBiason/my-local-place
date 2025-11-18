@@ -1,0 +1,3 @@
+[submodule "services/external/notion-automation-suite"]
+	path = services/external/notion-automation-suite
+	url = https://github.com/LucasBiason/notion-automation-suite

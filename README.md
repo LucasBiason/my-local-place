@@ -43,6 +43,7 @@ Modern web dashboard built with FastAPI (backend) and React + TypeScript (fronte
 ### Infrastructure
 - Unified Docker environment
 - 9 pre-configured services (Postgres, Redis, MongoDB, RabbitMQ, Ollama, etc.)
+- Optional monitoring stack (Prometheus + Grafana)
 - Systemd autostart capability
 - LLM support (Qwen2.5-Coder 3B installed)
 
@@ -86,6 +87,9 @@ Modern web dashboard built with FastAPI (backend) and React + TypeScript (fronte
 git clone https://github.com/LucasBiason/my-local-place.git
 cd my-local-place
 
+# Pull submodules (Notion Automation Suite)
+git submodule update --init --recursive
+
 # Note your installation path for systemd configuration
 pwd
 ```
@@ -98,6 +102,9 @@ make up
 
 # Start API + Frontend (full stack)
 make up-full
+
+# Start Prometheus + Grafana (monitoring profile)
+docker compose --profile monitoring up -d
 
 # Run tests
 make test
@@ -112,6 +119,8 @@ make down
 - **Backend API**: http://localhost:8800
 - **API Docs**: http://localhost:8800/docs
 - **ReDoc**: http://localhost:8800/redoc
+- **Prometheus**: http://localhost:9090 (monitoring profile)
+- **Grafana**: http://localhost:3030 (monitoring profile)
 
 ## API Endpoints
 
@@ -155,6 +164,36 @@ The following services are **created** but **not started** automatically. Use th
 | local-ollama | 11434 | Ollama LLM |
 | local-openwebui | 3000 | Open WebUI |
 | local-jupyter | 8888 | Jupyter Notebook |
+| prometheus | 9090 | Metrics scraping (profile `monitoring`) |
+| grafana | 3030 | Dashboards (profile `monitoring`) |
+
+## Monitoring Stack (optional)
+
+Prometheus e Grafana ficam habilitados através do profile `monitoring`:
+
+```bash
+docker compose --profile monitoring up -d
+```
+
+- **Prometheus** usa o arquivo `monitoring/prometheus/prometheus.yml`. Ajuste os `targets` conforme os serviços exporem `/metrics`.
+- **Grafana** está disponível em http://localhost:3030. O usuário/senha padrão pode ser sobrescrito via `GRAFANA_ADMIN_USER` e `GRAFANA_ADMIN_PASSWORD`.
+- Provisioning automático adiciona o datasource `Prometheus` via `monitoring/grafana/provisioning/datasources/prometheus.yml`. Use `monitoring/grafana/dashboards` para versionar dashboards JSON.
+- Para desligar:
+
+```bash
+docker compose --profile monitoring down
+```
+
+## MCP Helpers (Notion & GitHub)
+
+- O repositório `services/external/notion-automation-suite/` é um submódulo Git apontando para o MCP customizado usado pelos agentes.
+- Scripts prontos em `scripts/notion-mcp.sh` e `scripts/github-mcp.sh` encapsulam a execução dos servidores MCP sem precisar editar o `.cursor/mcp.json`.
+- Configure as variáveis copiando os exemplos:
+  - `cp configs/notion-mcp.env.example configs/notion-mcp.env`
+  - `cp configs/github-mcp.env.example configs/github-mcp.env`
+- O `.cursor/mcp.json` já aponta para esses scripts. Ajuste apenas os `.env` com seus tokens/IDs.
+- O `docker-compose.yml` possui o serviço `notion-mcp` (profile `mcp`). Quando alguma IDE iniciar o script, ele executa `docker compose up -d notion-mcp` e depois `docker compose exec -T notion-mcp notion-mcp-server`. Isso evita o erro “No server info found” e mantém o container disponível via dashboard.
+- Caso clonar o repositório em outro host, lembre-se de rodar `git submodule update --init --recursive` para trazer o Notion Automation Suite.
 
 ## Commands
 
@@ -215,7 +254,7 @@ StandardError=journal
 WantedBy=multi-user.target
 ```
 
-**Important**: 
+**Important**:
 - Replace `YOUR_USERNAME` with your Linux username (run `whoami` to check)
 - Replace `/absolute/path/to/my-local-place` with the full path where you cloned the project (use `pwd` inside project directory)
 
@@ -380,6 +419,10 @@ PGADMIN_DEFAULT_EMAIL=admin@mylocalplace.local
 PGADMIN_DEFAULT_PASSWORD=admin
 PGADMIN_CONFIG_SERVER_MODE=False
 
+# Grafana (optional)
+GRAFANA_ADMIN_USER=admin
+GRAFANA_ADMIN_PASSWORD=admin
+
 # See services/*.yml for other service configurations
 ```
 
@@ -452,6 +495,6 @@ MIT License
 
 ---
 
-**Status**: Production Ready  
-**Version**: 2.0.0  
+**Status**: Production Ready
+**Version**: 2.0.0
 **Updated**: October 30, 2025

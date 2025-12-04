@@ -25,6 +25,7 @@
 import { useEffect, useState } from 'react';
 import {
   listContainers,
+  rebuildContainer,
   restartContainer,
   startContainer,
   stopContainer,
@@ -63,6 +64,11 @@ export const useContainers = () => {
     await fetchContainers();
   };
 
+  const handleRebuild = async (name: string) => {
+    await rebuildContainer(name);
+    await fetchContainers();
+  };
+
   useEffect(() => {
     fetchContainers();
     const interval = setInterval(fetchContainers, 600000);
@@ -75,6 +81,7 @@ export const useContainers = () => {
     handleStart,
     handleStop,
     handleRestart,
+    handleRebuild,
     refresh: fetchContainers,
   };
 };

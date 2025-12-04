@@ -31,6 +31,7 @@ const App = () => {
     handleStart,
     handleStop,
     handleRestart,
+    handleRebuild,
     refresh,
   } = useContainers();
 
@@ -64,6 +65,7 @@ const App = () => {
           onStart={handleStart}
           onStop={handleStop}
           onRestart={handleRestart}
+          onRebuild={handleRebuild}
           onViewLogs={setSelectedContainer}
         />
       </main>

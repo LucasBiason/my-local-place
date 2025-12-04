@@ -5,6 +5,45 @@ All notable changes to MyLocalPlace project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-12-04
+
+### Added
+
+#### Backend
+- Container rebuild endpoint (`POST /api/v1/containers/{name}/rebuild`)
+- `rebuild_container` method in `DockerRepository` for rebuilding containers via docker-compose
+- Rebuild functionality in `ContainerController` to trigger container rebuilds
+
+#### Frontend
+- Rebuild button in `ContainerCard` component with Wrench icon
+- `rebuildContainer` API function in `api.ts`
+- `handleRebuild` hook in `useContainers` for container rebuild operations
+- Rebuild handler integration in `ContainerGrid` and `App` components
+
+#### Infrastructure
+- N8N service integration (`services/n8n.yml`)
+- N8N environment configuration files (`configs/n8n.env`, `configs/n8n.env.example`)
+- N8N data volume in docker-compose
+
+### Changed
+- Updated `docker-compose.yml` to include N8N service with environment file support
+- Enhanced container management UI with rebuild capability
+
+### Technical Details
+
+#### Rebuild Feature
+- Rebuild process: stops container → builds with `--no-cache` → restarts container
+- Uses docker-compose for service-specific rebuilds
+- Automatic container list refresh after rebuild completion
+- Error handling and user feedback in UI
+
+#### N8N Integration
+- Memory optimization (512MB limit)
+- Telemetry disabled
+- Timezone configured (America/Sao_Paulo)
+- Health check configured
+- Sensitive variables externalized to `.env` file
+
 ## [2.0.0] - 2025-10-30
 
 ### Added

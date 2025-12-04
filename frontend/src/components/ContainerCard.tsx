@@ -10,7 +10,7 @@
  * DESIGN: Dark mode + cantinho gradiente + icone circular
  */
 
-import { FileText, Play, RotateCw, Square } from 'lucide-react';
+import { FileText, Play, RotateCw, Square, Wrench } from 'lucide-react';
 import { useState } from 'react';
 import type { Container } from '../types';
 import {
@@ -26,6 +26,7 @@ type Props = {
   onStart: (name: string) => void;
   onStop: (name: string) => void;
   onRestart: (name: string) => void;
+  onRebuild: (name: string) => void;
   onViewLogs: (name: string) => void;
 };
 
@@ -34,6 +35,7 @@ export const ContainerCard = ({
   onStart,
   onStop,
   onRestart,
+  onRebuild,
   onViewLogs,
 }: Props) => {
   const [loading, setLoading] = useState(false);
@@ -102,7 +104,7 @@ export const ContainerCard = ({
         )}
 
         {/* BOTOES DE ACAO */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {!isRunning ? (
             <button
               onClick={() => handleAction(() => onStart(container.name))}
@@ -132,6 +134,16 @@ export const ContainerCard = ({
               </button>
             </>
           )}
+
+          <button
+            onClick={() => handleAction(() => onRebuild(container.name))}
+            disabled={loading}
+            className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all"
+            title="Rebuild container (build + restart)"
+          >
+            <Wrench className="w-4 h-4" />
+            Rebuild
+          </button>
 
           <button
             onClick={() => onViewLogs(container.name)}

@@ -260,3 +260,36 @@ class ContainerController:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to get stats: {str(e)}",
             )
+
+    @staticmethod
+    def rebuild(repository: DockerRepository, name: str) -> ContainerAction:
+        """Rebuild and restart a container.
+
+        Rebuilds the container using docker-compose build and restarts it.
+
+        Args:
+            repository: Docker repository instance.
+            name: Container name or ID to rebuild.
+
+        Returns:
+            ContainerAction model with operation result.
+
+        Raises:
+            HTTPException: 404 if not found, 500 if operation fails.
+
+        Example:
+            >>> repo = DockerRepository()
+            >>> result = ContainerController.rebuild(repo, "mylocalplace-api")
+        """
+        try:
+            result = repository.rebuild_container(name)
+            return ContainerAction(**result)
+        except ValueError as e:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail=str(e)
+            )
+        except RuntimeError as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=str(e),
+            )

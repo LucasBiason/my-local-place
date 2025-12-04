@@ -202,6 +202,17 @@ services:
       - local-services-network
     profiles: ["services"]
 
+  local-n8n:
+    container_name: local-n8n
+    extends:
+      file: services/n8n.yml
+      service: n8n
+    env_file:
+      - configs/n8n.env
+    networks:
+      - local-services-network
+    profiles: ["services"]
+
   notion-mcp:
     build:
       context: ./services/external/notion-automation-suite
@@ -272,6 +283,7 @@ volumes:
   jupyter_workspace:
   prometheus_data:
   grafana_data:
+  n8n_data:
 
 networks:
   local-services-network:

@@ -7,6 +7,7 @@ type ContainerGridProps = {
   onStart: (name: string) => void;
   onStop: (name: string) => void;
   onRestart: (name: string) => void;
+  onRebuild: (name: string) => void;
   onViewLogs: (name: string) => void;
 };
 
@@ -16,6 +17,7 @@ export const ContainerGrid = ({
   onStart,
   onStop,
   onRestart,
+  onRebuild,
   onViewLogs,
 }: ContainerGridProps) => {
   if (loading) {
@@ -43,6 +45,7 @@ export const ContainerGrid = ({
           onStart={onStart}
           onStop={onStop}
           onRestart={onRestart}
+          onRebuild={onRebuild}
           onViewLogs={onViewLogs}
         />
       ))}

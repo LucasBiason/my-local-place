@@ -302,6 +302,128 @@ class DockerRepository:
         except NotFound:
             raise ValueError(f"Container {name} not found")
 
+    def rebuild_container(self, name: str) -> Dict[str, str]:
+        """Rebuild and restart a container using docker-compose.
+
+        Stops the container, rebuilds it using docker-compose build,
+        and restarts it. This requires docker-compose to be available
+        and the container to be part of a docker-compose project.
+
+        Args:
+            name: Container name or ID to rebuild.
+
+        Returns:
+            Dictionary with status and message.
+
+        Raises:
+            ValueError: If container not found.
+            RuntimeError: If rebuild operation fails.
+
+        Example:
+            >>> repo = DockerRepository()
+            >>> result = repo.rebuild_container("mylocalplace-api")
+        """
+        import subprocess
+        from pathlib import Path
+
+        try:
+            container = self.client.containers.get(name)
+
+            # Get container labels to find compose project
+            labels = container.labels
+            project_name = labels.get("com.docker.compose.project", "")
+            service_name = labels.get("com.docker.compose.service", "")
+
+            if not project_name or not service_name:
+                raise RuntimeError(
+                    f"Container {name} is not part of a docker-compose "
+                    "project. Cannot rebuild without compose context."
+                )
+
+            # Find docker-compose.yml (try common locations)
+            compose_file = None
+            base_path = (
+                "/home/lucas-biason/Projetos/Infraestrutura/"
+                "my-local-place/docker-compose.yml"
+            )
+            possible_paths = [
+                Path(base_path),
+                Path.cwd() / "docker-compose.yml",
+                Path.home() / "my-local-place" / "docker-compose.yml",
+            ]
+
+            for path in possible_paths:
+                if path.exists():
+                    compose_file = path
+                    break
+
+            if not compose_file:
+                raise RuntimeError(
+                    "docker-compose.yml not found. Cannot rebuild container."
+                )
+
+            # Stop container first
+            if container.status == "running":
+                container.stop(timeout=10)
+
+            # Rebuild using docker-compose
+            compose_dir = compose_file.parent
+            result = subprocess.run(
+                [
+                    "docker-compose",
+                    "-f",
+                    str(compose_file),
+                    "build",
+                    "--no-cache",
+                    service_name,
+                ],
+                cwd=str(compose_dir),
+                capture_output=True,
+                text=True,
+                timeout=600,  # 10 minutes timeout
+            )
+
+            if result.returncode != 0:
+                raise RuntimeError(
+                    f"Failed to rebuild container: {result.stderr}"
+                )
+
+            # Restart using docker-compose
+            result = subprocess.run(
+                [
+                    "docker-compose",
+                    "-f",
+                    str(compose_file),
+                    "up",
+                    "-d",
+                    service_name,
+                ],
+                cwd=str(compose_dir),
+                capture_output=True,
+                text=True,
+                timeout=120,  # 2 minutes timeout
+            )
+
+            if result.returncode != 0:
+                raise RuntimeError(
+                    f"Failed to restart container: {result.stderr}"
+                )
+
+            return {
+                "status": "success",
+                "message": (
+                    f"Container {name} rebuilt and restarted successfully"
+                ),
+            }
+        except NotFound:
+            raise ValueError(f"Container {name} not found")
+        except subprocess.TimeoutExpired:
+            raise RuntimeError(
+                f"Rebuild operation timed out for container {name}"
+            )
+        except Exception as e:
+            raise RuntimeError(f"Failed to rebuild container: {str(e)}")
+
     @staticmethod
     def _format_ports(ports: Dict) -> List[str]:
         """Format port mappings for display.

@@ -122,3 +122,14 @@ export const getSystemMetrics = async (): Promise<SystemMetrics> => {
   const { data } = await api.get('/api/v1/system/metrics');
   return data;
 };
+
+/**
+ * Rebuild a container.
+ * 
+ * Rebuilds the container image and restarts it.
+ * 
+ * @param name - Container name or ID
+ */
+export const rebuildContainer = async (name: string): Promise<void> => {
+  await api.post(`/api/v1/containers/${name}/rebuild`);
+};

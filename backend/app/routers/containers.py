@@ -171,3 +171,26 @@ async def get_stats(name: str) -> ContainerStats:
         GET /api/v1/containers/postgres/stats
     """
     return ContainerController.get_stats(repository, name)
+
+
+@router.post("/{name}/rebuild", response_model=ContainerAction)
+async def rebuild_container(name: str) -> ContainerAction:
+    """Rebuild and restart a container.
+
+    Rebuilds the container image using docker-compose and restarts it.
+    This is useful when code changes require a new build.
+
+    Args:
+        name: Container name or ID to rebuild.
+
+    Returns:
+        Action result with status message.
+
+    Raises:
+        404: Container not found.
+        500: Failed to rebuild container.
+
+    Example:
+        POST /api/v1/containers/mylocalplace-api/rebuild
+    """
+    return ContainerController.rebuild(repository, name)

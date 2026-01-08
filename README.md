@@ -1,77 +1,119 @@
-<div align="center">
-  <img src="docs/assets/my-local-place-banner.png" alt="MyLocalPlace banner" width="100%" />
-</div>
+# My Local Place — Local Infrastructure Platform for Developers
 
-<div align="center">
-  <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.115-green.svg" alt="FastAPI" /></a>
-  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-18-61DAFB.svg" alt="React" /></a>
-  <a href="https://docker.com"><img src="https://img.shields.io/badge/Docker-Ready-blue.svg" alt="Docker" /></a>
-  <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.13-blue.svg" alt="Python 3.13" /></a>
-  <a href="https://typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5-3178C6.svg" alt="TypeScript 5" /></a>
-  <a href="https://pytest.org"><img src="https://img.shields.io/badge/Tests-69%20passed-success.svg" alt="Tests" /></a>
-  <a href="https://coverage.readthedocs.io"><img src="https://img.shields.io/badge/Coverage-92.28%25-success.svg" alt="Coverage" /></a>
-</div>
+> A developer-focused platform to manage, observe and standardize local development environments using Docker.
 
-# MyLocalPlace v2.0 - DevTools Dashboard
+[![Python](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+[![Coverage](https://img.shields.io/badge/coverage-92.28%25-success.svg)](backend/htmlcov/index.html)
 
-> **Full-stack Dashboard for managing local Docker containers and development services**
+---
 
-Modern web dashboard built with FastAPI (backend) and React + TypeScript (frontend) for managing Docker containers. Features real-time monitoring, resource alerts, and comprehensive container management.
+## Overview
 
-![MyLocalPlace Dashboard](docs/screenshots/dashboard.png)
+**My Local Place** is a local infrastructure platform created to improve developer experience when working with multiple backend, data and AI services.
 
-## Features
+The project centralizes commonly used tools such as databases, message brokers and AI runtimes into a single, observable and reproducible local environment. It allows developers to start, stop, rebuild and monitor services with minimal friction.
 
-### Backend API
-- REST API for Docker container management
-- Real-time container statistics (CPU, RAM, Network)
-- Resource usage monitoring and alerts
-- Container logs with timestamp streaming
-- Volume management and cleanup
-- System metrics (CPU, Memory, Disk)
+---
 
-### Frontend Dashboard
-- Modern React UI with TailwindCSS
-- Real-time container status display
-- Interactive controls (start, stop, restart)
-- Live log viewer
-- Resource usage charts with Recharts
-- Dark mode support
-- Responsive design
-- Container type icons with color classification
+## Why This Project Exists
 
-### Infrastructure
-- Unified Docker environment
-- 9 pre-configured services (Postgres, Redis, MongoDB, RabbitMQ, Ollama, etc.)
-- Optional monitoring stack (Prometheus + Grafana)
-- Systemd autostart capability
-- LLM support (Qwen2.5-Coder 3B installed)
+Setting up local development environments is often repetitive, error-prone and time-consuming. Over the years, this project evolved from a simple setup guide into a platform designed to:
 
-## Tech Stack
+- **Reduce environment setup time** — Get all services running with minimal configuration
+- **Improve reproducibility** — Consistent environments across machines and developers
+- **Provide visibility** — Monitor resource usage and inspect logs in real-time
+- **Focus on development** — Spend less time managing tools, more time building software
 
-### Backend
-- **Framework**: FastAPI 0.115
-- **Docker**: Python SDK 7.1
-- **Language**: Python 3.13
-- **Validation**: Pydantic 2.10
-- **Server**: Uvicorn 0.32
-- **Testing**: pytest + httpx + coverage (92.28%)
-- **Tools**: psutil, websockets
+This platform originated from **real personal needs** and has been used daily in backend, data and AI workflows.
 
-### Frontend
-- **Framework**: React 18 + Vite 6
-- **Language**: TypeScript 5
-- **Styling**: TailwindCSS 3
-- **Charts**: Recharts 2
-- **HTTP Client**: Axios
-- **Icons**: Lucide React
-- **Build**: Multi-stage Docker + Nginx
+---
 
-### Architecture
-- **Pattern**: Repository Pattern
-- **Code Quality**: PEP8, isort, black, flake8
-- **Testing**: Function-based, 69 tests, 92% coverage
-- **Deployment**: Docker Compose with profiles
+## Core Features
+
+### Infrastructure Services
+
+Modular composition of commonly used services:
+
+- **Databases:** PostgreSQL, MongoDB, MySQL
+- **Message Brokers:** RabbitMQ, Kafka
+- **Cache & Storage:** Redis
+- **Automation:** n8n (workflow automation)
+- **AI/ML:** Ollama (local LLMs), LangFlow (AI workflows), Jupyter
+- **PDF Processing:** BentoPDF
+
+### Operational Dashboard
+
+A lightweight frontend provides essential operational visibility:
+
+- **Container lifecycle management** — Start, stop, restart services
+- **Resource monitoring** — CPU and memory usage per container
+- **Log visualization** — Real-time log streaming
+- **System metrics** — Overall system resource usage
+
+### Design Principles
+
+- **Modular architecture** — Each service is isolated and can be started independently
+- **Simplicity over completeness** — Focus on essential operational needs, not full observability platforms
+- **Developer-first** — Optimized for local development experience
+- **Extensible** — Easy to add new services or workflows
+
+---
+
+## Architecture
+
+The platform follows a **modular architecture** where each service is isolated and can be started independently.
+
+A lightweight **FastAPI backend** orchestrates Docker containers and exposes control and monitoring capabilities. A simple **React frontend** provides operational visibility, resource usage insights and access to logs.
+
+### Components
+
+```
+┌─────────────────┐
+│  React Frontend │  ← Operational dashboard
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  FastAPI Backend│  ← Container orchestration
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│ Docker Services │  ← PostgreSQL, Redis, Kafka, etc.
+└─────────────────┘
+```
+
+### Service Isolation
+
+Each service is defined in its own `docker-compose` file under `/services`, allowing:
+
+- Independent lifecycle management
+- Service-specific configuration
+- Easy addition of new services
+- Composition of services based on project needs
+
+---
+
+## Design Decisions
+
+### Why Docker?
+
+Docker was chosen to ensure **environment reproducibility across machines**. Developers can run the same services consistently, regardless of their local OS or configuration.
+
+### Why Modular Services?
+
+Each service is isolated to allow **independent usage**. You can start only what you need for a specific project, reducing resource usage and startup time.
+
+### Why a Simple Frontend?
+
+The frontend is intentionally minimal and focused on **operational needs**. It's not meant to replace full observability platforms (like Grafana), but to provide essential visibility during local development.
+
+### Why FastAPI Backend?
+
+FastAPI provides a lightweight, fast and well-documented API for container orchestration. It's perfect for internal tooling that doesn't require complex business logic.
+
+---
 
 ## Quick Start
 
@@ -79,7 +121,7 @@ Modern web dashboard built with FastAPI (backend) and React + TypeScript (fronte
 
 - Docker 24+
 - Docker Compose 2+
-- Make
+- Make (optional, for convenience commands)
 
 ### Installation
 
@@ -87,414 +129,229 @@ Modern web dashboard built with FastAPI (backend) and React + TypeScript (fronte
 git clone https://github.com/LucasBiason/my-local-place.git
 cd my-local-place
 
-# Pull submodules (Notion Automation Suite)
-git submodule update --init --recursive
-
-# Note your installation path for systemd configuration
-pwd
+# Copy environment variables (if needed)
+cp configs/*.env.example configs/*.env
 ```
 
-### Run
+### Running the Platform
 
 ```bash
-# Start API + create all services (not started)
-make up
+# Start API only
+make dev
 
-# Start API + Frontend (full stack)
-make up-full
+# Start API + Frontend
+make dev-full
 
-# Start Prometheus + Grafana (monitoring profile)
-docker compose --profile monitoring up -d
+# Start specific services (e.g., PostgreSQL and Redis)
+docker compose up local-postgres local-redis
 
-# Run tests
-make test
-
-# Stop all
-make down
+# Start all services
+docker compose --profile services up
 ```
 
-### Access
+Access:
+- **Frontend Dashboard:** http://localhost:3000
+- **API:** http://localhost:8800
+- **API Docs:** http://localhost:8800/docs
 
-- **Frontend Dashboard**: http://localhost:3000
-- **Backend API**: http://localhost:8800
-- **API Docs**: http://localhost:8800/docs
-- **ReDoc**: http://localhost:8800/redoc
-- **Prometheus**: http://localhost:9090 (monitoring profile)
-- **Grafana**: http://localhost:3030 (monitoring profile)
+---
 
-## API Endpoints
+## Usage Examples
 
-### Health
-- `GET /health` - Health check
-
-### Containers
-- `GET /api/v1/containers` - List all containers
-- `GET /api/v1/containers/{name}` - Get container details
-- `POST /api/v1/containers/{name}/start` - Start container
-- `POST /api/v1/containers/{name}/stop` - Stop container
-- `POST /api/v1/containers/{name}/restart` - Restart container
-- `GET /api/v1/containers/{name}/logs` - Get container logs
-- `GET /api/v1/containers/{name}/stats` - Get container stats
-
-### System
-- `GET /api/v1/system/metrics` - System metrics (CPU, RAM, Disk)
-
-### Alerts
-- `GET /api/v1/alerts` - Get resource alerts and warnings
-
-### Volumes
-- `GET /api/v1/volumes` - List Docker volumes with usage info
-
-### Cleanup
-- `POST /api/v1/cleanup/containers` - Stop unused containers
-- `POST /api/v1/cleanup/volumes` - Remove unused volumes
-
-## Services Managed
-
-The following services are **created** but **not started** automatically. Use the dashboard or API to manage them:
-
-| Service | Port | Description |
-|---------|------|-------------|
-| local-postgres | 5432 | PostgreSQL 17 |
-| local-dbadmin | 8080 | PgAdmin 4 |
-| local-redis | 6379 | Redis 7.4 |
-| local-rabbitmq | 5672, 15672 | RabbitMQ 3.13 |
-| local-mongodb | 27017 | MongoDB latest |
-| local-langflow | 7860 | LangFlow AI |
-| local-ollama | 11434 | Ollama LLM |
-| local-openwebui | 3000 | Open WebUI |
-| local-jupyter | 8888 | Jupyter Notebook |
-| prometheus | 9090 | Metrics scraping (profile `monitoring`) |
-| grafana | 3030 | Dashboards (profile `monitoring`) |
-
-## Monitoring Stack (optional)
-
-Prometheus e Grafana ficam habilitados através do profile `monitoring`:
+### Backend Development
 
 ```bash
-docker compose --profile monitoring up -d
+# Start PostgreSQL and Redis for backend development
+docker compose up local-postgres local-redis
 ```
 
-- **Prometheus** usa o arquivo `monitoring/prometheus/prometheus.yml`. Ajuste os `targets` conforme os serviços exporem `/metrics`.
-- **Grafana** está disponível em http://localhost:3030. O usuário/senha padrão pode ser sobrescrito via `GRAFANA_ADMIN_USER` e `GRAFANA_ADMIN_PASSWORD`.
-- Provisioning automático adiciona o datasource `Prometheus` via `monitoring/grafana/provisioning/datasources/prometheus.yml`. Use `monitoring/grafana/dashboards` para versionar dashboards JSON.
-- Para desligar:
+### Data Pipeline Development
 
 ```bash
-docker compose --profile monitoring down
+# Start Kafka, PostgreSQL and Redis for data pipelines
+docker compose up local-kafka local-postgres local-redis
 ```
 
-## MCP Helpers (Notion & GitHub)
-
-- O repositório `services/external/notion-automation-suite/` é um submódulo Git apontando para o MCP customizado usado pelos agentes.
-- Scripts prontos em `scripts/notion-mcp.sh` e `scripts/github-mcp.sh` encapsulam a execução dos servidores MCP sem precisar editar o `.cursor/mcp.json`.
-- Configure as variáveis copiando os exemplos:
-  - `cp configs/notion-mcp.env.example configs/notion-mcp.env`
-  - `cp configs/github-mcp.env.example configs/github-mcp.env`
-- O `.cursor/mcp.json` já aponta para esses scripts. Ajuste apenas os `.env` com seus tokens/IDs.
-- O `docker-compose.yml` possui o serviço `notion-mcp` (profile `mcp`). Quando alguma IDE iniciar o script, ele executa `docker compose up -d notion-mcp` e depois `docker compose exec -T notion-mcp notion-mcp-server`. Isso evita o erro “No server info found” e mantém o container disponível via dashboard.
-- Caso clonar o repositório em outro host, lembre-se de rodar `git submodule update --init --recursive` para trazer o Notion Automation Suite.
-
-## Commands
+### AI/ML Experiments
 
 ```bash
-make test      # Run 69 unit tests (coverage 92.28%)
-make up        # Start API only + create services
-make up-full   # Start API + Frontend (full stack)
-make down      # Stop all containers
-make logs      # View API logs
-make lint      # Run isort, black, flake8
-make format    # Format code (isort + black)
-make clean     # Clean Docker cache
+# Start Ollama and Jupyter for AI experiments
+docker compose up local-ollama local-jupyter
 ```
+
+### Full Stack with Automation
+
+```bash
+# Start all services including automation tools
+docker compose --profile services up
+```
+
+---
+
+## Available Services
+
+### Databases
+
+- **PostgreSQL** (`local-postgres`) — SQL database with pgAdmin interface
+- **MongoDB** (`local-mongo`) — NoSQL database
+- **MySQL** (`local-mysql`) — SQL database alternative
+
+### Message Brokers
+
+- **RabbitMQ** (`local-rabbitmq`) — Message queue with management UI
+- **Kafka** (`local-kafka`) — Distributed streaming platform
+
+### Cache & Storage
+
+- **Redis** (`local-redis`) — In-memory data store and cache
+
+### Automation & Workflows
+
+- **n8n** (`local-n8n`) — Workflow automation platform
+- **Jupyter** (`local-jupyter`) — Interactive notebooks for data science
+
+### AI/ML Services
+
+- **Ollama** (`local-ollama`) — Local LLM runtime (e.g., Qwen2.5-Coder 3B)
+- **LangFlow** (`local-langflow`) — Visual AI workflow builder
+
+### Utilities
+
+- **BentoPDF** (`local-bentopdf`) — PDF processing service
+
+Each service can be started independently and exposes ports for local development.
+
+---
+
+## Extending the Platform
+
+To add a new service (e.g., RabbitMQ):
+
+1. Create a new service file under `/services` (e.g., `services/rabbitmq.yml`)
+2. Define the service with Docker Compose syntax
+3. Reference it in the main `docker-compose.yml` using `extends`
+4. Add a profile if you want it optional (e.g., `profiles: ["services"]`)
+5. Update this README with service documentation
+
+Example:
+
+```yaml
+# services/rabbitmq.yml
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"      # AMQP
+      - "15672:15672"    # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+```
+
+---
+
+## Observability Dashboard
+
+The frontend is intentionally minimal and focused on operational needs:
+
+- **Container lifecycle management** — Start, stop, restart, rebuild services
+- **Resource usage monitoring** — CPU and memory usage per container
+- **Log visualization** — Real-time log streaming with timestamps
+- **System metrics** — Overall CPU, memory and disk usage
+
+The goal is **not to replace full observability platforms** (like Prometheus + Grafana), but to provide **essential visibility during local development**.
+
+---
 
 ## Testing
 
 ```bash
-# Run tests with coverage
+# Run all tests
 make test
 
-# Results:
-# - 69 tests (100% passing)
-# - Coverage: 92.28%
-# - Report: backend/htmlcov/index.html
+# Run tests with coverage report
+docker compose run --rm test
+
+# View coverage report
+open backend/htmlcov/index.html
 ```
 
-## Autostart on Boot (Systemd)
+**Coverage:** 92.28% (69 tests)
 
-Configure MyLocalPlace to start automatically on system boot:
+---
 
-### 1. Create Service File
+## Tech Stack
 
-```bash
-sudo nano /etc/systemd/system/mylocalplace.service
-```
+### Backend
+- Python 3.13
+- FastAPI 0.115
+- Docker SDK 7.1
+- Pydantic 2.10
+- Uvicorn 0.32
 
-### 2. Add Configuration
+### Frontend
+- React 18
+- TypeScript 5
+- Vite 6
+- TailwindCSS 3
+- Recharts 2 (for metrics visualization)
+- Lucide React (icons)
 
-```ini
-[Unit]
-Description=MyLocalPlace Docker Dashboard
-After=docker.service
-Requires=docker.service
+### Infrastructure
+- Docker & Docker Compose
+- Multi-stage builds
+- Service isolation with profiles
 
-[Service]
-Type=simple
-User=YOUR_USERNAME
-WorkingDirectory=/absolute/path/to/my-local-place
-ExecStartPre=/usr/bin/docker compose down
-ExecStart=/usr/bin/docker compose up api frontend
-ExecStop=/usr/bin/docker compose down
-Restart=on-failure
-RestartSec=10s
-StandardOutput=journal
-StandardError=journal
+---
 
-[Install]
-WantedBy=multi-user.target
-```
+## Project Status
 
-**Important**:
-- Replace `YOUR_USERNAME` with your Linux username (run `whoami` to check)
-- Replace `/absolute/path/to/my-local-place` with the full path where you cloned the project (use `pwd` inside project directory)
+📍 **In active use**
 
-**Example**:
-```ini
-User=john
-WorkingDirectory=/home/john/projects/my-local-place
-```
+This platform is used daily for backend development, data pipelines, AI experiments and workflow automation. It's continuously evolved based on real development needs.
 
-### 3. Enable and Start
+---
 
-```bash
-# Reload systemd configuration
-sudo systemctl daemon-reload
+## Contributing
 
-# Enable autostart
-sudo systemctl enable mylocalplace.service
+This is a personal project, but suggestions and improvements are welcome. If you want to adapt it for your own use:
 
-# Start service now
-sudo systemctl start mylocalplace.service
+1. Fork the repository
+2. Customize services based on your needs
+3. Add services you commonly use
+4. Share your improvements if they might benefit others
 
-# Check status
-sudo systemctl status mylocalplace.service
-```
-
-### 4. Verify
-
-```bash
-# View logs
-sudo journalctl -u mylocalplace.service -f
-
-# Test autostart
-sudo reboot
-```
-
-After reboot, MyLocalPlace will be available at http://localhost:3000
-
-### Systemd Commands
-
-```bash
-# Start
-sudo systemctl start mylocalplace.service
-
-# Stop
-sudo systemctl stop mylocalplace.service
-
-# Restart
-sudo systemctl restart mylocalplace.service
-
-# Disable autostart
-sudo systemctl disable mylocalplace.service
-
-# View status
-sudo systemctl status mylocalplace.service
-```
-
-## Architecture
-
-```
-MyLocalPlace API (Port 8800)
-├── Manages Docker containers
-├── Monitors system resources
-└── Provides REST API
-
-Frontend Dashboard (Port 3000)
-├── React + TypeScript
-├── Real-time charts
-└── Interactive controls
-
-Services (Created, not started)
-├── local-postgres
-├── local-redis
-├── local-rabbitmq
-├── local-mongodb
-├── local-langflow
-├── local-ollama
-├── local-openwebui
-├── local-jupyter
-└── local-dbadmin
-```
-
-## Development
-
-### Project Structure
-
-```
-my-local-place/
-├── Makefile                 # Commands
-├── docker-compose.yml       # Orchestration
-├── CHANGELOG.md             # Version history
-├── docs/
-│   ├── screenshots/
-│   │   └── dashboard.png
-│   └── MyLocalPlace_API.postman_collection.json
-├── backend/
-│   ├── Dockerfile          # Multi-stage build
-│   ├── entrypoint.sh       # Container commands
-│   ├── requirements.txt    # Production deps
-│   ├── requirements-dev.txt # Dev/test deps
-│   ├── pytest.ini
-│   ├── .coveragerc
-│   ├── app/
-│   │   ├── main.py         # FastAPI app
-│   │   ├── core/           # Docker client singleton
-│   │   ├── repositories/   # Data access layer
-│   │   ├── controllers/    # Business logic
-│   │   ├── routers/        # API endpoints
-│   │   └── schemas/        # Pydantic models
-│   └── tests/              # Unit tests (92% coverage)
-├── frontend/
-│   ├── Dockerfile          # Multi-stage (Node + Nginx)
-│   ├── nginx.conf          # Nginx config
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── tailwind.config.js
-│   ├── vite.config.ts
-│   ├── src/
-│   │   ├── App.tsx         # Main component
-│   │   ├── components/     # React components
-│   │   ├── hooks/          # Custom hooks
-│   │   ├── services/       # API client
-│   │   ├── types/          # TypeScript types
-│   │   └── utils/          # Utility functions
-│   └── public/             # Static assets
-└── services/               # Service configs (docker-compose extends)
-```
-
-### Code Quality
-
-- **PEP8**: isort + black + flake8
-- **JSDoc**: Complete TypeScript documentation
-- **Type Hints**: 100%
-- **Pattern**: Repository Pattern
-- **Tests**: 92.28% coverage
-
-## Postman Collection
-
-Import `docs/MyLocalPlace_API.postman_collection.json` to Postman.
-
-Contains:
-- 8 requests
-- 10 real examples (success + errors)
-- Variable: `{{base_url}}`
-
-## Environment Variables
-
-Create `.env` file (optional):
-
-```env
-# API Configuration
-PORT=8000
-WORKERS=4
-LOG_LEVEL=info
-
-# PostgreSQL
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_PORT=5432
-
-# PgAdmin
-PGADMIN_DEFAULT_EMAIL=admin@mylocalplace.local
-PGADMIN_DEFAULT_PASSWORD=admin
-PGADMIN_CONFIG_SERVER_MODE=False
-
-# Grafana (optional)
-GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=admin
-
-# See services/*.yml for other service configurations
-```
-
-## Troubleshooting
-
-### API not connecting to Docker?
-
-Ensure Docker socket is accessible:
-
-```bash
-ls -la /var/run/docker.sock
-
-# Add user to docker group if needed
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-### Tests failing?
-
-```bash
-# Clean and rebuild
-make down
-make test
-```
-
-### Port 8000 or 3000 already in use?
-
-```bash
-# Check what's using the ports
-sudo ss -tlnp | grep -E ':(3000|8000)'
-
-# Change port in docker-compose.yml if needed
-```
-
-### Systemd service not starting?
-
-```bash
-# View detailed logs
-sudo journalctl -u mylocalplace.service -xe
-
-# Check Docker is running
-sudo systemctl status docker.service
-```
-
-## Roadmap
-
-- [x] Backend FastAPI
-- [x] Docker SDK integration
-- [x] REST API endpoints
-- [x] Unit tests (92% coverage)
-- [x] Postman Collection
-- [x] Frontend React + TypeScript
-- [x] Real-time monitoring
-- [x] Resource alerts system
-- [x] Volume management
-- [x] LLM integration (Qwen2.5-Coder 3B)
-- [ ] WebSocket logs (future)
-- [ ] Container compose orchestration (future)
-- [ ] Multi-host support (future)
+---
 
 ## License
 
-MIT License
+This project is provided as-is for personal and educational use.
+
+---
 
 ## Author
 
 **Lucas Biason**
-- GitHub: [@LucasBiason](https://github.com/LucasBiason)
-- Project: [my-local-place](https://github.com/LucasBiason/my-local-place)
+
+Senior Backend Engineer | Python, APIs & Intelligent Systems
+
+- 🌐 [Portfolio](https://lucasbiason.com)
+- 💼 [LinkedIn](https://www.linkedin.com/in/lucas-biason)
+- 🔗 [GitHub](https://github.com/LucasBiason)
 
 ---
 
-**Status**: Production Ready
-**Version**: 2.0.0
-**Updated**: October 30, 2025
+## Why This Project Matters
+
+This project demonstrates:
+
+- **Problem-solving mindset** — Identifying real friction points in developer workflows
+- **Platform thinking** — Building solutions that benefit multiple use cases
+- **Pragmatic engineering** — Balancing simplicity with functionality
+- **Developer experience focus** — Prioritizing developer productivity over complexity
+- **Infrastructure knowledge** — Understanding containers, orchestration and observability
+
+It's not just about Docker — it's about **reducing friction so developers can focus on building software**.
+
+---
+
+**Built from real-world needs and evolved through years of hands-on usage in backend, data and AI workflows.**

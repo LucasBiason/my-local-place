@@ -213,6 +213,23 @@ services:
       - local-services-network
     profiles: ["services"]
 
+  local-bentopdf:
+    container_name: local-bentopdf
+    extends:
+      file: services/bentopdf.yml
+      service: bentopdf
+    env_file:
+      - .env
+    networks:
+      - local-services-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    profiles: ["services"]
+
   notion-mcp:
     build:
       context: ./services/external/notion-automation-suite

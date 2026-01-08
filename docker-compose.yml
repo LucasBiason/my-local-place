@@ -74,7 +74,7 @@ services:
   local-postgres:
     container_name: local-postgres
     extends:
-      file: services/postgres.yml
+      file: services/postgres/docker-compose.yml
       service: postgres
     env_file:
       - .env
@@ -90,7 +90,7 @@ services:
   local-dbadmin:
     container_name: local-dbadmin
     extends:
-      file: services/postgres.yml
+      file: services/postgres/docker-compose.yml
       service: dbadmin
     env_file:
       - .env
@@ -104,7 +104,7 @@ services:
   local-redis:
     container_name: local-redis
     extends:
-      file: services/redis.yml
+      file: services/redis/docker-compose.yml
       service: cache
     env_file:
       - .env
@@ -120,7 +120,7 @@ services:
   local-rabbitmq:
     container_name: local-rabbitmq
     extends:
-      file: services/rabbitmq.yml
+      file: services/rabbitmq/docker-compose.yml
       service: rabbitmq
     env_file:
       - .env
@@ -136,7 +136,7 @@ services:
   local-mongodb:
     container_name: local-mongodb
     extends:
-      file: services/mongo.yml
+      file: services/mongo/docker-compose.yml
       service: mongodb
     env_file:
       - .env
@@ -152,7 +152,7 @@ services:
   local-langflow:
     container_name: local-langflow
     extends:
-      file: services/langflow.yml
+      file: services/langflow/docker-compose.yml
       service: langflow
     env_file:
       - .env
@@ -166,7 +166,7 @@ services:
   local-ollama:
     container_name: local-ollama
     extends:
-      file: services/ollama.yml
+      file: services/ollama/docker-compose.yml
       service: ollama
     networks:
       - local-services-network
@@ -180,7 +180,7 @@ services:
   local-openwebui:
     container_name: local-openwebui
     extends:
-      file: services/ollama.yml
+      file: services/ollama/docker-compose.yml
       service: openWebUI
     env_file:
       - .env
@@ -194,7 +194,7 @@ services:
   local-jupyter:
     container_name: local-jupyter
     extends:
-      file: services/jupyter.yml
+      file: services/jupyter/docker-compose.yml
       service: jupyter
     env_file:
       - .env
@@ -205,7 +205,7 @@ services:
   local-n8n:
     container_name: local-n8n
     extends:
-      file: services/n8n.yml
+      file: services/n8n/docker-compose.yml
       service: n8n
     env_file:
       - configs/n8n.env
@@ -216,7 +216,7 @@ services:
   local-bentopdf:
     container_name: local-bentopdf
     extends:
-      file: services/bentopdf.yml
+      file: services/bentopdf/docker-compose.yml
       service: bentopdf
     env_file:
       - .env

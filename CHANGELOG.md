@@ -5,6 +5,13 @@ All notable changes to MyLocalPlace project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-01-22
+
+### Fixed
+- **Evolution API**: Updated from version 2.2.3 to 2.3.6 (latest stable)
+  - Updated Docker image tag in `services/evolution/docker-compose.yml`
+  - Updated documentation in `services/evolution/README.md`
+
 ## [2.1.0] - 2025-12-04
 
 ### Added
